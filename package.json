@@ -1,7 +1,7 @@
 {
-  "name": "technologist-academy-node-service-template",
+  "name": "team-c-pending-ecommerce-frontend",
   "version": "1.0.0",
-  "description": "A template repository for node services developed in the Technologist Academy",
+  "description": "Frontend for the team C pending ecommerce project",
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
