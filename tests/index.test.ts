@@ -1,5 +1,5 @@
-import { test } from "node:test";
+import { expect, test } from "vitest";
 
-test("example test", (t, done) => {
-    done();
+test("example test", () => {
+    expect(true).toBe(true);
 });
