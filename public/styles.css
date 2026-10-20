@@ -46,7 +46,7 @@ button:hover {
 }
 
 header {
-    background: linear-gradient(90deg, rgba(42, 123, 155, 1) 0%, rgba(87, 199, 133, 1) 100%);
+    background: linear-gradient(90deg, rgba(42, 123, 155, 1) 0%, rgba(46, 125, 50, 1) 100%);
     color: white;
     padding: 10px 0;
     text-align: center;
