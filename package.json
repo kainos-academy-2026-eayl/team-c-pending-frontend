@@ -20,6 +20,7 @@
 		"@types/express": "5.0.6",
 		"@types/node": "26.4.1",
 		"@types/supertest": "^7.2.1",
+		"biome": "^0.3.3",
 		"esbuild": "0.28.2",
 		"supertest": "^7.3.1",
 		"tsx": "4.23.13",
