@@ -1,4 +1,6 @@
-export default [
+// Mock product data that will be replaced by API calls once the backend is ready
+
+const products = [
     {
         name: "Apple",
         price: 1.99,
@@ -133,3 +135,11 @@ export default [
         category: "Bakery"
     },
 ];
+
+export function filterProductsByCategory(category: string) {
+    return products.filter(product => product.category === category);
+}
+
+export default products;
+
+export const categories = Array.from(new Set(products.map(product => product.category)));
