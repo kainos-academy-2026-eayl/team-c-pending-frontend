@@ -8,5 +8,6 @@ export function createApp(): Express {
 		res.json({ status: "ok", uptime: process.uptime() });
 	});
 
+	app.use(express.static("public"));
 	return app;
 }
