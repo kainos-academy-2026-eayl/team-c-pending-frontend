@@ -48,6 +48,9 @@ header {
     color: white;
     padding: 10px 0;
     text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
 }
 
 .products-container {
@@ -66,14 +69,37 @@ header {
     text-align: center;
 }
 
-.active {
-    font-weight: bold;
-    text-decoration: underline;
-    color: black;
+.categories-container a.active {
+    color: white;
+    background-color: #4CAF50;
 }
 
 .categories-container {
     display: flex;
-    justify-content: space-around;
     padding: 10px 0;
+    gap: 10px;
+    justify-content: center;
+}
+
+.categories-container a {
+    text-decoration: none;
+    color: black;
+    background-color: #bababa;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.links {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+}
+
+header a {
+    color: white;
+    text-decoration: none;
+}
+
+header a:hover {
+    text-decoration: underline;
 }

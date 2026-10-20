@@ -20,6 +20,7 @@ export function createApp(): Express {
 	app.get("/register", registerController);
 
 	app.get("/products", productsController);
+	app.get("/", productsController);
 
 	app.use(express.static("public"));
 	return app;
