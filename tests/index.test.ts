@@ -1,5 +1,5 @@
 import request from "supertest";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, test } from "vitest";
 import { createApp } from "../src/app";
 
 describe("GET /health", () => {
@@ -8,4 +8,8 @@ describe("GET /health", () => {
 
 		expect(response.body).toHaveProperty("status", "ok");
 	});
+});
+
+test("fail", () => {
+	expect(true).toBe(false);
 });
