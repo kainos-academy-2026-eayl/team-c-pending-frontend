@@ -12,4 +12,5 @@ describe("GET /health", () => {
 
 test("fail", () => {
 	expect(true).toBe(false);
+	expect(true).toBe(false);
 });
