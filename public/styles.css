@@ -9,7 +9,9 @@ form {
     background-color: #ffffff;
     padding: 20px;
     margin: 50px auto;
-    width: 300px;
+    box-sizing: border-box;
+    width: calc(100% - 32px);
+    max-width: 340px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
