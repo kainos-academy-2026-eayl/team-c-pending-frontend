@@ -10,7 +10,7 @@
     "typecheck": "tsc",
     "start": "node dist/index.js",
     "test": "vitest run",
-    "posttest": """lint": "biome check",
+    "lint": "biome check",
     "lint:fix": "biome check --write",
     "prepare": "husky"
   },
