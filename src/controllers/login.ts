@@ -8,7 +8,7 @@ const router = Router();
 
 router.get("/", (req: Request, res: Response) => {
     const error = req.query.error as string | undefined;
-    res.render("login.html", { error });
+    res.render("login.njk", { error });
 });
 
 router.post("/", async (req: Request, res: Response) => {
