@@ -1,0 +1,25 @@
+{% extends "layout.njk" %}
+{% block head %}
+<link rel="stylesheet" type="text/css" href="/products.css">
+{% endblock %}
+{% block title %}Products Page{% endblock %}
+{% block header %}Products Page{% endblock %}
+{% block content %}
+<div class="categories-container">
+    <a href="/products" {% if currentCategory==null %}class="active" {% endif %}>All</a>
+    {% for category in categories %}
+    <a href="/products?category={{ category }}" {% if currentCategory==category %}class="active" {% endif %}>{{ category
+        }}</a>
+    {% endfor %}
+</div>
+<div class="products-container">
+    {% for product in products %}
+    <div class="product">
+        <h2>{{ product.name }}</h2>
+        <p>Price: £{{ product.price }}</p>
+        <p>{{ product.description }}</p>
+        <p>Category: {{ product.category }}</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

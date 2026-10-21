@@ -1,0 +1,36 @@
+.products-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.product {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 200px;
+    text-align: center;
+}
+
+.categories-container a.active {
+    color: white;
+    background-color: #2e7d32;
+}
+
+.categories-container {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 10px 0;
+    gap: 10px;
+    justify-content: center;
+}
+
+.categories-container a {
+    text-decoration: none;
+    color: black;
+    background-color: #bababa;
+    border-radius: 5px;
+    padding: 10px;
+}

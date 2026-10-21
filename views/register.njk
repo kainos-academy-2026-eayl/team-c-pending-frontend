@@ -1,0 +1,23 @@
+{% extends "layout.njk" %}
+{% block title %}Register Page{% endblock %}
+{% block header %}Register Page{% endblock %}
+{% block content %}
+<form>
+    <label for="first-name">Name:</label><br>
+    <input type="text" id="first-name" name="first-name">
+    <br>
+    <label for="last-name">Surname:</label><br>
+    <input type="text" id="last-name" name="last-name">
+    <br>
+    <label for="email">Email:</label><br>
+    <input type="email" id="email" name="email">
+    <br>
+    <label for="password">Password:</label><br>
+    <input type="password" id="password" name="password">
+    <br>
+    <label for="confirm-password">Confirm Password:</label><br>
+    <input type="password" id="confirm-password" name="confirm-password">
+    <br>
+    <button type="submit">Register</button>
+</form>
+{% endblock %}
