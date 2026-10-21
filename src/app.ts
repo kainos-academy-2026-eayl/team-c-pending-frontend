@@ -16,6 +16,20 @@ export function createApp(): Express {
 	app.use(cookieParser());
 	app.use(bodyParser.urlencoded({ extended: true }));
 
+	// TODO: once we have a domain then we need to uncomment this code to prevent links to our form endpoints from other pages
+	// app.use((req, res, next) => {
+	// 	const origin = req.get("Origin");
+
+	// 	if (
+	// 		["POST", "PUT", "PATCH", "DELETE"].includes(req.method) &&
+	// 		origin !== "https://app.example.com"
+	// 	) {
+	// 		return res.sendStatus(403);
+	// 	}
+
+	// 	next();
+	// });
+
 	nunjucks.configure("views", {
 		autoescape: true,
 		express: app,
@@ -33,19 +47,6 @@ export function createApp(): Express {
 	app.use(express.static("public"));
 	app.get("/account", accountController);
 	app.post("/logout", logoutController);
-
-	app.use((req, res, next) => {
-		const origin = req.get("Origin");
-
-		if (
-			["POST", "PUT", "PATCH", "DELETE"].includes(req.method) &&
-			origin !== "https://app.example.com"
-		) {
-			return res.sendStatus(403);
-		}
-
-		next();
-	});
 
 	return app;
 
