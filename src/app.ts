@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 import nunjucks from "nunjucks";
 import { healthController } from "./controllers/health";
 import loginController from "./controllers/login";
+import { accountController } from "./controllers/account";
 import bodyParser from "body-parser";
 import "dotenv/config";
 
@@ -23,6 +24,7 @@ export function createApp(): Express {
 	app.use("/login", loginController);
 
 	app.use(express.static("public"));
+	app.get("/account", accountController);
 
 	return app;
 
