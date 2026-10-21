@@ -2,7 +2,10 @@
 {% block title %}Login Page{% endblock %}
 {% block header %}Login Page{% endblock %}
 {% block content %}
-<form>
+<form method="POST" action="/login">
+    {% if error %}
+    <p style="color: red;">{{ error }}</p>
+    {% endif %}
     <label for="email">Email:</label><br>
     <input type="email" id="email" name="email">
     <br>
