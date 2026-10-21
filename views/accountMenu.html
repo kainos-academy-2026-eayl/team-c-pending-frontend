@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block title %}Account Menu{% endblock %}
+{% block header %}Account Menu{% endblock %}
+{% block content %}
+<div class="orders-container">
+    {% for order in orders %}
+    <div class="product">
+        <h2>{{ order.orderID }}</h2>
+        <p>Price: £{{ order.price }}</p>
+        <p>Items: {{ order.items }}</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
