@@ -10,6 +10,13 @@ export const accountController = async (req: Request, res: Response) => {
                 "Authorization": `Bearer ${jwt}`
             }
         });
+        if (name.status === 401 || name.status === 403) {
+            res.clearCookie("JWT_TOKEN");
+            return res.redirect("/login");
+        }
+        if (!name.ok) {
+            return res.status(name.status).send("Failed to load account");
+        }
         const data = await name.json();
         const Me = z.object({
             firstName: z.string(),
