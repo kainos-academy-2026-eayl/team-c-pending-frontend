@@ -10,10 +10,10 @@ import "dotenv/config";
 
 export function createApp(): Express {
 	const app = express();
-  
+
 	app.use(cookieParser());
 	app.use(bodyParser.urlencoded({ extended: true }));
-  
+
 	nunjucks.configure("views", {
 		autoescape: true,
 		express: app,
@@ -23,6 +23,7 @@ export function createApp(): Express {
 	app.get("/health", healthController);
 
 	app.get("/login", loginController);
+	app.get("/register", registerController);
 
 	app.get("/", productsController);
 	app.get("/products", productsController);
