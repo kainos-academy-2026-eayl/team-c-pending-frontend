@@ -2,6 +2,11 @@
 {% block title %}Account Menu{% endblock %}
 {% block header %}Account Menu{% endblock %}
 {% block content %}
+Hello, {{ firstName }} {{ lastName }}
+<br>
+<form action="/logout" method="post">
+    <button type="submit">Logout</button>
+</form>
 <div class="orders-container">
     {% for order in orders %}
     <div class="product">
