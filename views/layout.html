@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="/common.css">
+</head>
+
+<body>
+    <header>
+        <h1><a href="/">Pending Studios</a></h1>
+        <div class="links">
+            <a href="/login">Login</a>
+            <a href="/register">Register</a>
+        </div>
+    </header>
+    {% block content %}{% endblock %}
+</body>
+
+</html>

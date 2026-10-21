@@ -1,12 +1,29 @@
-import process from "node:process";
-import express, { type Express, type Request, type Response } from "express";
+import express, { type Express } from "express";
+import cookieParser from "cookie-parser";
+import nunjucks from "nunjucks";
+import { healthController } from "./controllers/health";
+import loginController from "./controllers/login";
+import bodyParser from "body-parser";
+import "dotenv/config";
 
 export function createApp(): Express {
 	const app = express();
 
-	app.get("/health", (_req: Request, res: Response) => {
-		res.json({ status: "ok", uptime: process.uptime() });
+	app.use(cookieParser());
+	app.use(bodyParser.urlencoded({ extended: true }));
+
+	nunjucks.configure("views", {
+		autoescape: true,
+		express: app,
+		noCache: true,
 	});
 
+	app.get("/health", healthController);
+
+	app.use("/login", loginController);
+
+	app.use(express.static("public"));
+
 	return app;
+
 }
