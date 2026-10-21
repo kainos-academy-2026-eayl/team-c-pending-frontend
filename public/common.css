@@ -53,6 +53,10 @@ header {
     display: flex;
     align-items: center;
     justify-content: space-around;
+
+    h1 {
+        font-family: didot, serif;
+    }
 }
 
 .links {
