@@ -3,6 +3,7 @@ import nunjucks from "nunjucks";
 import { healthController } from "./controllers/health";
 import { loginController } from "./controllers/login";
 import { registerController } from "./controllers/register";
+import { productsController } from "./controllers/products";
 
 export function createApp(): Express {
 	const app = express();
@@ -18,6 +19,9 @@ export function createApp(): Express {
 	app.get("/login", loginController);
 
 	app.get("/register", registerController);
+
+	app.get("/", productsController);
+	app.get("/products", productsController);
 
 	app.use(express.static("public"));
 	return app;
