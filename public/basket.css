@@ -1,0 +1,19 @@
+.basket-products-list {
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+    background-color: #ddd;
+    padding: 0;
+    margin: 0;
+    gap: 2px;
+}
+
+main {
+    width: 500px;
+    max-width: 95%;
+    margin: 0 auto;
+}
+
+.basket-products-list li {
+    background-color: var(--background);
+}

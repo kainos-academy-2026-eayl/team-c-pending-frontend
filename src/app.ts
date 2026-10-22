@@ -2,6 +2,7 @@ import express, { type Express } from "express";
 import nunjucks from "nunjucks";
 import { healthController } from "./controllers/health";
 import { registerController } from "./controllers/register";
+import basketController from "./controllers/basket";
 import { productsController } from "./controllers/products";
 import cookieParser from "cookie-parser";
 import loginController from "./controllers/login";
@@ -14,19 +15,25 @@ export function createApp(): Express {
 	app.use(cookieParser());
 	app.use(bodyParser.urlencoded({ extended: true }));
 
-	nunjucks.configure("views", {
+	const env = nunjucks.configure("views", {
 		autoescape: true,
 		express: app,
 		noCache: true,
 	});
 
+	env.addFilter('pounds', function (num, length) {
+		return num.toFixed(length || 2);
+	});
+
 	app.get("/health", healthController);
 
-	app.get("/login", loginController);
+	app.use("/login", loginController);
 	app.get("/register", registerController);
 
 	app.get("/", productsController);
 	app.get("/products", productsController);
+
+	app.use("/basket", basketController);
 
 	app.use(express.static("public"));
 	return app;
