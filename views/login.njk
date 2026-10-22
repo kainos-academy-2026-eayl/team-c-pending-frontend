@@ -10,8 +10,46 @@
     <input type="email" id="email" name="email">
     <br>
     <label for="password">Password:</label><br>
-    <input type="password" id="password" name="password">
+    <div class="password-field">
+        <input type="password" id="password" name="password">
+        <button type="button" id="toggle-password" aria-controls="password">show</button>
+    </div>
     <br>
     <button type="submit">Login</button>
 </form>
+<script defer>
+    const passwordInput = document.getElementById("password");
+    const togglePasswordButton = document.getElementById("toggle-password");
+
+    if (!passwordInput || !togglePasswordButton) {
+        throw new Error("Password visibility controls could not be found.");
+    }
+
+    const setPasswordVisibility = (isVisible) => {
+        passwordInput.type = isVisible ? "text" : "password";
+        togglePasswordButton.setAttribute("aria-pressed", String(isVisible));
+    };
+
+    togglePasswordButton.addEventListener("pointerdown", (event) => {
+        if (event.button !== 0) {
+            return;
+        }
+
+        togglePasswordButton.setPointerCapture(event.pointerId);
+        setPasswordVisibility(true);
+    });
+    togglePasswordButton.addEventListener("pointerup", () => setPasswordVisibility(false));
+    togglePasswordButton.addEventListener("pointercancel", () => setPasswordVisibility(false));
+    togglePasswordButton.addEventListener("keydown", (event) => {
+        if (event.key === " " || event.key === "Enter") {
+            setPasswordVisibility(true);
+        }
+    });
+    togglePasswordButton.addEventListener("keyup", (event) => {
+        if (event.key === " " || event.key === "Enter") {
+            setPasswordVisibility(false);
+        }
+    });
+    window.addEventListener("blur", () => setPasswordVisibility(false));
+</script>
 {% endblock %}
