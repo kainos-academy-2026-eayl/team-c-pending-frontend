@@ -32,7 +32,6 @@ router.post("/", async (req: Request, res: Response) => {
             const data = ValidationError.parse(await response.json());
             return res.redirect("/register?error=" + encodeURIComponent(data.issues[0]!.message));
         }
-        console.log(response.status, await response.text());
         return res.status(response.status).send("Login failed");
     }
 
