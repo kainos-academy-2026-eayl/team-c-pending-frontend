@@ -1,7 +1,7 @@
 import z from "zod";
 
 export default z.object({
-    id: z.string(),
+    id: z.int(),
     name: z.string(),
     category: z.string(),
     price: z.number(),
