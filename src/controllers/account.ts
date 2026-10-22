@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import orders from "../account";
+import orders from "../orders";
 import z from "zod";
 
 export const accountController = async (req: Request, res: Response) => {
