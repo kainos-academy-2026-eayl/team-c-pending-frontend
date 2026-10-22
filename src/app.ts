@@ -5,6 +5,8 @@ import { registerController } from "./controllers/register";
 import { productsController } from "./controllers/products";
 import cookieParser from "cookie-parser";
 import loginController from "./controllers/login";
+import { logoutController } from "./controllers/logout";
+import { accountController } from "./controllers/account";
 import bodyParser from "body-parser";
 import "dotenv/config";
 
@@ -13,6 +15,20 @@ export function createApp(): Express {
 
 	app.use(cookieParser());
 	app.use(bodyParser.urlencoded({ extended: true }));
+
+	// TODO: once we have a domain then we need to uncomment this code to prevent links to our form endpoints from other pages
+	// app.use((req, res, next) => {
+	// 	const origin = req.get("Origin");
+
+	// 	if (
+	// 		["POST", "PUT", "PATCH", "DELETE"].includes(req.method) &&
+	// 		origin !== "https://app.example.com"
+	// 	) {
+	// 		return res.sendStatus(403);
+	// 	}
+
+	// 	next();
+	// });
 
 	nunjucks.configure("views", {
 		autoescape: true,
@@ -29,6 +45,9 @@ export function createApp(): Express {
 	app.get("/products", productsController);
 
 	app.use(express.static("public"));
+	app.get("/account", accountController);
+	app.post("/logout", logoutController);
+
 	return app;
 
 }
