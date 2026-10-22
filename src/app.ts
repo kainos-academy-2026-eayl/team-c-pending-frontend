@@ -1,7 +1,7 @@
 import express, { type Express } from "express";
 import nunjucks from "nunjucks";
 import { healthController } from "./controllers/health";
-import { registerController } from "./controllers/register";
+import registerController from "./controllers/register";
 import { productsController } from "./controllers/products";
 import cookieParser from "cookie-parser";
 import loginController from "./controllers/login";
@@ -22,8 +22,8 @@ export function createApp(): Express {
 
 	app.get("/health", healthController);
 
-	app.get("/login", loginController);
-	app.get("/register", registerController);
+	app.use("/login", loginController);
+	app.use("/register", registerController);
 
 	app.get("/", productsController);
 	app.get("/products", productsController);
