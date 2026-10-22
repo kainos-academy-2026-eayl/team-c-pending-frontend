@@ -1,8 +1,6 @@
 import type { Request, Response } from "express";
 import products, { filterProductsByCategory, categories } from "../products";
 
-
-
 export const productsController = (req: Request, res: Response) => {
     if (req.query.category) {
         const category = req.query.category.toString();

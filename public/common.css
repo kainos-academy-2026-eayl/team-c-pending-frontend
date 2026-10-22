@@ -9,7 +9,7 @@ body {
     padding: 0;
 }
 
-form {
+.main-page-form {
     background-color: #ffffff;
     padding: 20px;
     margin: 50px auto;
@@ -63,6 +63,7 @@ header {
     display: flex;
     gap: 30px;
     justify-content: center;
+    flex-flow: row wrap;
 }
 
 header a {
@@ -82,4 +83,17 @@ header a:hover {
 
 .text-align-right {
     text-align: right;
+}
+
+button.link {
+    font-size: 1em;
+    font-family: Arial, sans-serif;
+    background: none;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button.link:hover {
+    text-decoration: underline;
 }

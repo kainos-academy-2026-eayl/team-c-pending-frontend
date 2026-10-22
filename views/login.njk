@@ -2,7 +2,7 @@
 {% block title %}Login Page{% endblock %}
 {% block header %}Login Page{% endblock %}
 {% block content %}
-<form method="POST" action="/login">
+<form method="POST" action="/login" class="main-page-form">
     {% if error %}
     <p style="color: red;">{{ error }}</p>
     {% endif %}

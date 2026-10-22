@@ -8,12 +8,32 @@ import cookieParser from "cookie-parser";
 import loginController from "./controllers/login";
 import bodyParser from "body-parser";
 import "dotenv/config";
+import Me from "./schemas/Me";
 
 export function createApp(): Express {
 	const app = express();
 
 	app.use(cookieParser());
 	app.use(bodyParser.urlencoded({ extended: true }));
+	app.use(async (req, res, next) => {
+		if (req.cookies.JWT_TOKEN) {
+			const token = req.cookies.JWT_TOKEN;
+			const me = await fetch(`${process.env.API_ADDRESS}/me`, {
+				headers: {
+					Authorization: `Bearer ${token}`
+				}
+			});
+			if (me.status === 200) {
+				const meData = Me.parse(await me.json());
+				res.locals.me = meData;
+			} else {
+				if (me.status === 401 || me.status === 403) {
+					res.clearCookie("JWT_TOKEN");
+				}
+			}
+		}
+		next();
+	});
 
 	const env = nunjucks.configure("views", {
 		autoescape: true,
