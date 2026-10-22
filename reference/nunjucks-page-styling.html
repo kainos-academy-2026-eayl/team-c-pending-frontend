@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nunjucks page styling reference</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <h1>Three layers of a page</h1>
+  <section>
+    <p><strong>Nunjucks:</strong> combines templates and fills blocks. <code>{% extends "layout.njk" %}</code> reuses the layout.</p>
+    <p><strong>HTML:</strong> gives content structure. Use headings, paragraphs and links inside the content block.</p>
+    <p><strong>CSS:</strong> controls appearance. Target a class to set colour, spacing and width.</p>
+    <pre><code>&lt;p class="confirmation-message"&gt;Thank you for your order.&lt;/p&gt;
+
+.confirmation-message {
+    color: #245c39;
+    margin-top: 1rem;
+}</code></pre>
+    <p>A block must have a place in the parent layout to appear there. A block named
+    <code>header</code> does not automatically create an HTML heading.</p>
+  </section>
+  <p><a href="../lessons/0002-style-a-nunjucks-page.html">Practice lesson</a> |
+  <a href="https://mozilla.github.io/nunjucks/templating.html#template-inheritance">Nunjucks inheritance</a> |
+  <a href="https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics/What_is_CSS">MDN CSS</a></p>
+</body>
+</html>

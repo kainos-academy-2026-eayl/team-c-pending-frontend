@@ -3,6 +3,7 @@ import nunjucks from "nunjucks";
 import { healthController } from "./controllers/health";
 import { registerController } from "./controllers/register";
 import { productsController } from "./controllers/products";
+import { confirmationController } from "./controllers/confirmation";
 import cookieParser from "cookie-parser";
 import loginController from "./controllers/login";
 import bodyParser from "body-parser";
@@ -22,11 +23,13 @@ export function createApp(): Express {
 
 	app.get("/health", healthController);
 
-	app.get("/login", loginController);
+	app.use("/login", loginController);
 	app.get("/register", registerController);
 
 	app.get("/", productsController);
 	app.get("/products", productsController);
+
+	app.get("/confirmation", confirmationController);
 
 	app.use(express.static("public"));
 	return app;

@@ -1,0 +1,10 @@
+:root { font-family: system-ui, sans-serif; color: #243047; background: #f5f6fa; line-height: 1.65; }
+body { max-width: 760px; margin: 3rem auto; padding: 0 1.5rem 3rem; }
+h1, h2 { line-height: 1.2; color: #15223b; }
+h1 { font-size: 2.3rem; }
+section { background: white; padding: 1.4rem; margin: 1.2rem 0; border: 1px solid #dce1eb; border-radius: 10px; }
+pre { overflow-x: auto; padding: 1rem; background: #edf1f7; border-radius: 6px; }
+code { font-family: ui-monospace, monospace; }
+a { color: #2157a4; }
+summary { cursor: pointer; font-weight: 600; }
+@media print { :root { background: white; color: black; } body { margin: 0 auto; } section { break-inside: avoid; } details > * { display: block; } }

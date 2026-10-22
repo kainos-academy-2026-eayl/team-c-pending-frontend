@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Choose get or use in Express</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <p>LESSON 01 / ABOUT 4 MINUTES</p>
+  <h1>One page, or a shared step?</h1>
+  <p>Your goal: choose the right Express method when adding a frontend route.</p>
+  <section>
+    <h2>Two different jobs</h2>
+    <p>A request includes an HTTP method, such as GET, and a path, such as <code>/account-menu</code>.
+    Opening a page normally sends GET.</p>
+    <pre><code>app.get('/account-menu', accountController);</code></pre>
+    <p>This registers a handler for GET requests to that route. Your controller can render the account page.</p>
+    <pre><code>app.use(express.static('public'));</code></pre>
+    <p>This mounts middleware: a function that can inspect a request, respond, or pass it on.
+    Here, Express checks for public files, such as a stylesheet. If it cannot find a file,
+    it normally passes control to the next handler.</p>
+    <p><strong>Memory aid:</strong> <code>get</code> selects a request method and route;
+    <code>use</code> mounts a step or group of routes.</p>
+    <p><a href="https://expressjs.com/en/guide/using-middleware/">Source: Express middleware guide</a></p>
+  </section>
+  <section>
+    <h2>Why a path on use is different</h2>
+    <pre><code>app.use('/account', accountRouter);</code></pre>
+    <p>A router is a group of routes. This mounts it under <code>/account</code> for any HTTP method.
+    It can receive both <code>/account</code> and <code>/account/orders</code>.
+    Inside that router, the matching paths are <code>/</code> and <code>/orders</code>.</p>
+    <p>By contrast, <code>app.get('/account', handler)</code> does not automatically
+    match <code>/account/orders</code>. A path prefix must end at a segment boundary:
+    <code>/account</code> does not match <code>/accounting</code>.</p>
+    <p><a href="https://expressjs.com/en/5x/api/application/">Source: Express Application API</a></p>
+  </section>
+  <section>
+    <h2>Order matters</h2>
+    <p>Express checks matching registrations in order. A handler that sends a response finishes
+    the request. Calling <code>next()</code> passes control onward. Doing neither leaves the request waiting.</p>
+    <p>Neither method means "always runs": an earlier response can prevent later handlers from running.
+    Also, GET routes can contain middleware; the distinction is not "middleware versus no middleware."</p>
+    <p><a href="https://expressjs.com/en/guide/using-middleware/">Source: control flow in Express</a></p>
+  </section>
+  <section>
+    <h2>Try from memory</h2>
+    <p>Say your answer before opening each explanation.</p>
+    <p>1. Display an order-history page on GET <code>/orders</code>.</p>
+    <p>A: Register with get.<br>B: Register with use.</p>
+    <details><summary>Check answer 1</summary><p>A. Use <code>app.get('/orders', ordersController)</code>
+    for this method-specific page route.</p></details>
+    <p>2. Mount a router containing GET and POST routes under <code>/orders</code>.</p>
+    <p>A: Register with get.<br>B: Register with use.</p>
+    <details><summary>Check answer 2</summary><p>B. Use <code>app.use('/orders', ordersRouter)</code>.
+    The router's own routes choose the HTTP methods.</p></details>
+    <p>3. Does <code>app.use('/account', middleware)</code> match POST <code>/account/orders</code>?</p>
+    <p>A: It can match.<br>B: It cannot match.</p>
+    <details><summary>Check answer 3</summary><p>A. The prefix matches, and use does not restrict
+    the HTTP method. It runs if the request reaches that registration.</p></details>
+  </section>
+  <h2>Keep it tomorrow</h2>
+  <p>Without reopening this lesson, explain which method you would use for an account page
+  and which for a group of account routes. Send your explanation to the agent for feedback,
+  and ask follow-up questions about anything unclear.</p>
+  <p>Read next: <a href="https://expressjs.com/en/guide/using-middleware/">Express's official middleware guide</a>.</p>
+  <p><a href="../reference/express-get-use.html">Quick reference</a></p>
+</body>
+</html>
