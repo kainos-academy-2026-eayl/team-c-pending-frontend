@@ -2,7 +2,10 @@
 {% block title %}Register Page{% endblock %}
 {% block header %}Register Page{% endblock %}
 {% block content %}
-<form class="main-page-form">
+<form method="POST" action="/register" class="main-page-form">
+    {% if error %}
+    <p style="color: red;">{{ error }}</p>
+    {% endif %}
     <label for="first-name">Name:</label><br>
     <input type="text" id="first-name" name="first-name">
     <br>
