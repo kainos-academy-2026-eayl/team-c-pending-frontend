@@ -14,18 +14,28 @@ Basket
         <li>
             <div class="space-between">
                 <div>
-                    <h3>{{ item.name }}</h3>
-                    <p>{{ item.description }}</p>
+                    <h3>{{ item.product.name }}</h3>
+                    <p>{{ item.product.name }}</p>
                 </div>
                 <div class="text-align-right">
-                    <p>Price: £{{ item.price | pounds }}</p>
+                    <p>Price: £{{ item.product.price | pounds }}</p>
                     <div class="quantity-controls">
                         Quantity:
-                        <button>-</button>
+                        <form action="/basket" method="post">
+                            <input type="number" name="id" hidden value="{{item.product.id}}">
+                            <input type="number" name="quantity" hidden value="-1">
+                            <input type="text" name="quantityMode" hidden value="relative">
+                            <button type="submit" type="button">-</button>
+                        </form>
                         <span>{{ item.quantity }}</span>
-                        <button>+</button>
+                        <form action="/basket" method="post">
+                            <input type="number" name="id" hidden value="{{item.product.id}}">
+                            <input type="number" name="quantity" hidden value="1">
+                            <input type="text" name="quantityMode" hidden value="relative">
+                            <button type="submit" type="button">+</button>
+                        </form>
                     </div>
-                    <p>Total: £{{ (item.price * item.quantity) | pounds }}</p>
+                    <p>Total: £{{ (item.product.price * item.quantity) | pounds }}</p>
                 </div>
             </div>
 
