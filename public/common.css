@@ -1,11 +1,15 @@
+:root {
+    --background: #f0f0f0;
+}
+
 body {
     font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
+    background-color: var(--background);
     margin: 0;
     padding: 0;
 }
 
-form {
+.main-page-form {
     background-color: #ffffff;
     padding: 20px;
     margin: 50px auto;
@@ -30,7 +34,7 @@ input {
     border-radius: 5px;
 }
 
-button {
+.main-button {
     box-sizing: border-box;
     width: 100%;
     padding: 10px;
@@ -41,7 +45,7 @@ button {
     cursor: pointer;
 }
 
-button:hover {
+.main-button button:hover {
     background-color: #256529;
 }
 
@@ -63,6 +67,7 @@ header {
     display: flex;
     gap: 30px;
     justify-content: center;
+    flex-flow: row wrap;
 }
 
 header a {
@@ -71,6 +76,29 @@ header a {
 }
 
 header a:hover {
+    text-decoration: underline;
+}
+
+.space-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.text-align-right {
+    text-align: right;
+}
+
+button.link {
+    font-size: 1em;
+    font-family: Arial, sans-serif;
+    background: none;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button.link:hover {
     text-decoration: underline;
 }
 
