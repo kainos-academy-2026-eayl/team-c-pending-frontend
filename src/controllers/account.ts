@@ -23,7 +23,7 @@ export const accountController = async (req: Request, res: Response) => {
             lastName: z.string()
         });
         const user = Me.parse(data);
-        res.render("accountMenu.html", { orders, firstName: user.firstName, lastName: user.lastName });
+        res.render("accountMenu.njk", { orders, firstName: user.firstName, lastName: user.lastName });
     } else {
         res.redirect("/login");
     }
