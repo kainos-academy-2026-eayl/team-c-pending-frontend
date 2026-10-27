@@ -1,0 +1,53 @@
+{% extends "layout.njk" %}
+{% block head %}
+<link rel="stylesheet" href="/basket.css">
+{% endblock %}
+{% block title %}
+Basket
+{% endblock %}
+{% block content %}
+<main>
+    <h1>Basket</h1>
+    {% if items|length %}
+    <ul class="basket-products-list">
+        {% for item in items %}
+        <li>
+            <div class="space-between">
+                <div>
+                    <h3>{{ item.product.name }}</h3>
+                    <p>{{ item.product.name }}</p>
+                </div>
+                <div class="text-align-right">
+                    <p>Price: £{{ item.product.price | pounds }}</p>
+                    <div class="quantity-controls">
+                        Quantity:
+                        <form action="/basket" method="post">
+                            <input type="number" name="id" hidden value="{{item.product.id}}">
+                            <input type="number" name="quantity" hidden value="-1">
+                            <input type="text" name="quantityMode" hidden value="relative">
+                            <button type="submit" type="button">-</button>
+                        </form>
+                        <span>{{ item.quantity }}</span>
+                        <form action="/basket" method="post">
+                            <input type="number" name="id" hidden value="{{item.product.id}}">
+                            <input type="number" name="quantity" hidden value="1">
+                            <input type="text" name="quantityMode" hidden value="relative">
+                            <button type="submit" type="button">+</button>
+                        </form>
+                    </div>
+                    <p>Total: £{{ (item.product.price * item.quantity) | pounds }}</p>
+                </div>
+            </div>
+
+        </li>
+        {% endfor %}
+        <li>
+            <h2>Total: £{{ total | pounds }}</h2>
+            <button class="main-button">Proceed to Checkout</button>
+        </li>
+    </ul>
+    {% else %}
+    <p>Your basket is empty.</p>
+    {% endif %}
+    {% endblock %}
+</main>
