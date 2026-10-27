@@ -18,6 +18,23 @@ export function createApp(): Express {
 
 	app.use(cookieParser());
 	app.use(bodyParser.urlencoded({ extended: true }));
+	app.use((req, res, next) => {
+		if (["POST", "PUT", "PATCH", "DELETE"].includes(req.method)) {
+			const origin = req.get("Origin");
+			const host = req.get("host");
+			if (!origin || !host) {
+				return res.sendStatus(403);
+			}
+			try {
+				if (new URL(origin).origin !== new URL(`${req.protocol}://${host}`).origin) {
+					return res.sendStatus(403);
+				}
+			} catch {
+				return res.sendStatus(403);
+			}
+		}
+		next();
+	});
 	app.use(async (req, res, next) => {
 		if (req.cookies.JWT_TOKEN) {
 			const token = req.cookies.JWT_TOKEN;
