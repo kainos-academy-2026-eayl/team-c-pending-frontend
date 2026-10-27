@@ -1,0 +1,20 @@
+{% extends "layout.njk" %}
+{% block head %}
+<link rel="stylesheet" href="/styles/common.css">
+{% endblock %}
+{% block title %}Account Menu{% endblock %}
+{% block content %}
+<main>
+    <h2 class="h2">Order history</h2>
+    <div class="orders-container">
+        {% for order in orders %}
+        <div class="product">
+            <h3>Order ID: {{ order.orderID }}</h3>
+            <p>Price: £{{ order.price }}</p>
+            <p>Items: {{ order.items }}</p>
+            <p>Customer ID: {{ order.customerID }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</main>
+{% endblock %}
