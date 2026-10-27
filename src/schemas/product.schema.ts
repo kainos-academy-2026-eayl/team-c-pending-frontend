@@ -1,10 +1,11 @@
 import z from "zod";
 
 export default z.object({
-    id: z.int(),
     name: z.string(),
-    category: z.string(),
+    id: z.number(),
     price: z.number(),
     description: z.string(),
-    imageUrl: z.string().optional()
+    category: z.string(),
+    quantity: z.int(),
+    image: z.string().nullable(),
 });
