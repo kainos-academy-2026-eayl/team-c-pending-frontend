@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import cache from "../cache";
 import { z } from "zod";
-import Product from "../schemas/Product";
+import Product from "../schemas/product.schema";
 
 export const productsController = async (req: Request, res: Response) => {
     let productData;

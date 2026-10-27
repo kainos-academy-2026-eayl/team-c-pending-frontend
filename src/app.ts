@@ -10,7 +10,7 @@ import { logoutController } from "./controllers/logout";
 import { accountController } from "./controllers/account";
 import bodyParser from "body-parser";
 import "dotenv/config";
-import Me from "./schemas/Me";
+import User from "./schemas/user.schema";
 
 export function createApp(): Express {
 	const app = express();
@@ -26,7 +26,7 @@ export function createApp(): Express {
 				}
 			});
 			if (me.status === 200) {
-				const meData = Me.parse(await me.json());
+				const meData = User.parse(await me.json());
 				res.locals.me = meData;
 			} else {
 				if (me.status === 401 || me.status === 403) {

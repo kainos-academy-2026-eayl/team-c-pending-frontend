@@ -1,8 +1,8 @@
 import type { Request, Response } from "express";
 import { Router } from "express";
 import z from "zod";
-import Error from "../schemas/Error";
-import ValidationError from "../schemas/ValidationError";
+import Error from "../schemas/error.schema";
+import ValidationError from "../schemas/validation-error.schema";
 
 const router = Router();
 

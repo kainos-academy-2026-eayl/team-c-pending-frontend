@@ -1,6 +1,6 @@
 import { Router } from "express";
 import z from "zod";
-import Basket from "../schemas/Basket";
+import Basket from "../schemas/basket.schema";
 
 const router = Router();
 

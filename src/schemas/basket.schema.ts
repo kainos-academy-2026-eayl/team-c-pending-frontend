@@ -1,5 +1,5 @@
 import z from "zod";
-import Product from "./Product";
+import Product from "./product.schema";
 
 export default z.array(z.object({
     productId: z.number(),
