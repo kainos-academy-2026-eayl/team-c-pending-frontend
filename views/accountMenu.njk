@@ -1,8 +1,15 @@
 {% extends "layout.njk" %}
+{% block head %}
+<link rel="stylesheet" type="text/css" href="/products.css">
+{% endblock %}
 {% block title %}Account Menu{% endblock %}
 {% block header %}Account Menu{% endblock %}
 {% block content %}
-<center>
+<main>
+    <h2>Account details</h2>
+    <p>Name: {{ firstName }} {{ lastName }}</p>
+    <p>Email: {{ email }}
+
     <h2>Order history</h2>
     <div class="orders-container">
         {% for order in orders %}
@@ -14,9 +21,5 @@
         </div>
         {% endfor %}
     </div>
-    <h2>Account controls</h2>
-    <form action="/logout" method="post">
-        <button type="submit">Logout</button>
-    </form>
-</center>
+</main>
 {% endblock %}
