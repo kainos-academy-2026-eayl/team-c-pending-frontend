@@ -17,3 +17,7 @@ main {
 .basket-products-list li {
     background-color: var(--background);
 }
+
+.quantity-controls {
+    display: flex;
+}

@@ -6,6 +6,6 @@ export default z.object({
     price: z.number(),
     description: z.string(),
     category: z.string(),
-    stock: z.boolean(),
+    quantity: z.int(),
     image: z.string().nullable(),
 });
