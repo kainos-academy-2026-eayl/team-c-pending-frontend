@@ -44,6 +44,7 @@ input {
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    height: 40px;
 }
 
 .password-field {
