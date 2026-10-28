@@ -127,3 +127,9 @@ button.link:hover {
     overflow: scroll;
     height: 100vh;
 }
+
+.basket-count {
+    background-color: red;
+    padding: 5px;
+    border-radius: 20px;
+}

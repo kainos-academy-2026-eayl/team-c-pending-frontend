@@ -20,7 +20,8 @@
                     <button class="link" type="submit">Logout</button>
                 </form>
                 <a href="/account">Account</a>
-                <a href="/basket">Basket</a>
+                <a href="/basket"><img src="/basket.svg">{% if me.basketCount != 0 %}<span
+                        class="basket-count">{{ me.basketCount }}</span>{% endif %}</a>
                 {% else %}
                 <a href="/login">Login</a>
                 <a href="/register">Register</a>
