@@ -10,24 +10,26 @@
 </head>
 
 <body>
-    <header>
-        <h1><a href="/">Pending Studios</a></h1>
-        <div class="links">
-            {% if me %}
-            <span>Welcome, {{ me.firstName }} {{ me.lastName }}</span>
-            <form action="/logout" method="POST">
-                <button class="link" type="submit">Logout</button>
-            </form>
-            <a href="/account">Account</a>
-            <a href="/basket">Basket</a>
-            {% else %}
-            <a href="/login">Login</a>
-            <a href="/register">Register</a>
-            {% endif %}
+    <div class="content">
+        <header>
+            <h1><a href="/">Pending Studios</a></h1>
+            <div class="links">
+                {% if me %}
+                <span>Welcome, {{ me.firstName }} {{ me.lastName }}</span>
+                <form action="/logout" method="POST">
+                    <button class="link" type="submit">Logout</button>
+                </form>
+                <a href="/account">Account</a>
+                <a href="/basket">Basket</a>
+                {% else %}
+                <a href="/login">Login</a>
+                <a href="/register">Register</a>
+                {% endif %}
 
-        </div>
-    </header>
-    {% block content %}{% endblock %}
+            </div>
+        </header>
+        {% block content %}{% endblock %}
+    </div>
 </body>
 
 </html>
