@@ -133,3 +133,41 @@ button.link:hover {
     padding: 5px;
     border-radius: 20px;
 }
+
+main {
+    width: 500px;
+    max-width: 95%;
+    margin: 0 auto;
+
+    margin-top: 10px;
+
+    padding: 20px;
+    box-sizing: border-box;
+    width: calc(100% - 32px);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+    backdrop-filter: blur(10px) brightness(75%);
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
+.product {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: white;
+    backdrop-filter: blur(10px) brightness(75%);
+
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 200px;
+    text-align: center;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
