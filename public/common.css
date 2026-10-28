@@ -115,16 +115,6 @@ button.link:hover {
     text-decoration: underline;
 }
 
-.product {
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: calc(100% - 40px);
-    max-width: 300px;
-    box-sizing: border-box;
-}
-
 .orders-container {
     display: flex;
     flex-wrap: wrap;
@@ -136,4 +126,10 @@ button.link:hover {
 .content {
     overflow: scroll;
     height: 100vh;
+}
+
+.basket-count {
+    background-color: red;
+    padding: 5px;
+    border-radius: 20px;
 }
