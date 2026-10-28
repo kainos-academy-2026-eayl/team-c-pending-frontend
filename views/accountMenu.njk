@@ -21,8 +21,11 @@
                 <p>Customer ID: {{ order.customerID }}</p>
             </div>
             {% endfor %}
+            <h2>Account controls</h2>
+            <form action="/logout" method="post">
+                <button class="main-button" type="submit">Logout</button>
+            </form>
         </div>
     </center>
-
 </main>
 {% endblock %}
