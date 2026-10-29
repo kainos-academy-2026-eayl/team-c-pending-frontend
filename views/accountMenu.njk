@@ -1,9 +1,16 @@
 {% extends "layout.njk" %}
+{% block head %}
+{% endblock %}
 {% block title %}Account Menu{% endblock %}
 {% block header %}Account Menu{% endblock %}
 {% block content %}
 <main>
     <center>
+        <h2>Account details</h2>
+        <p>Customer ID: {{ customerId }}</p>
+        <p>Name: {{ firstName }} {{ lastName }}</p>
+        <p>Email: {{ email }}</p>
+
         <h2>Order history</h2>
         <div class="orders-container">
             {% for order in orders %}
@@ -14,11 +21,11 @@
                 <p>Customer ID: {{ order.customerID }}</p>
             </div>
             {% endfor %}
+            <h2>Account controls</h2>
+            <form action="/logout" method="post">
+                <button class="main-button" type="submit">Logout</button>
+            </form>
         </div>
-        <h2>Account controls</h2>
-        <form action="/logout" method="post">
-            <button class="main-button" type="submit">Logout</button>
-        </form>
     </center>
 </main>
 {% endblock %}
