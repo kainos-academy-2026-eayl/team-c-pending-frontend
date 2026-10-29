@@ -43,7 +43,9 @@ Basket
         {% endfor %}
         <li>
             <h2>Total: £{{ total | pounds }}</h2>
-            <button class="main-button">Proceed to Checkout</button>
+            <form action="/checkout" method="post">
+                <button class="main-button" type="submit">Proceed to Checkout</button>
+            </form>
         </li>
     </ul>
     {% else %}
@@ -51,3 +53,7 @@ Basket
     {% endif %}
     {% endblock %}
 </main>
+
+<script>
+
+</script>
