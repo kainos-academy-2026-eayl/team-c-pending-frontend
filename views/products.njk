@@ -14,10 +14,10 @@
 </div>
 <div class="products-container">
     {% for product in products %}
-    <div class="product">
+    <div class="product" data-test-id="product">
         <div>
             <img src="{{ product.image }}" alt="{{ product.name }}">
-            <h2>{{ product.name }}</h2>
+            <h2 data-test-id="product-name">{{ product.name }}</h2>
             <p>{{ product.description }}</p>
         </div>
 
@@ -26,7 +26,8 @@
             <input type="number" name="productID" hidden value="{{product.productID}}">
             <input type="number" name="quantity" hidden value="1">
             <input type="text" name="quantityMode" hidden value="relative">
-            <button type="submit" data-test="add-to-basket" class="main-button" type="button">Add to Basket</button>
+            <button type="submit" data-test-id="add-to-basket-button" class="main-button" type="button">Add to
+                Basket</button>
         </form>
     </div>
 
