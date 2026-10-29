@@ -11,12 +11,12 @@ Basket
     {% if items|length %}
     <ul class="basket-products-list">
         {% for item in items %}
-        <li>
+        <li data-test-id="product">
             <div class="space-between">
                 <div>
-                    <h3>{{ item.product.name }}</h3>
-                    <p>{{ item.product.name }}</p>
-                </div>
+                    <h3 data-test-id="product-name">{{ item.product.name }}</h3>
+                    <p>{{ item.product.description }}</p>
+                </div>no
                 <div class="text-align-right">
                     <p>Price: £{{ item.product.price | pounds }}</p>
                     <div class="quantity-controls">
@@ -25,16 +25,14 @@ Basket
                             <input type="number" name="productID" hidden value="{{item.product.productID}}">
                             <input type="number" name="quantity" hidden value="-1">
                             <input type="text" name="quantityMode" hidden value="relative">
-                            <button type="submit" data-test-id="{{item.product.id}}-decrease-quantity"
-                                type="button">-</button>
+                            <button type="submit" data-test-id="decrease-quantity" type="button">-</button>
                         </form>
-                        <span>{{ item.quantity }}</span>
+                        <span data-test-id="quantity">{{ item.quantity }}</span>
                         <form action="/basket" method="post">
                             <input type="number" name="productID" hidden value="{{item.product.productID}}">
                             <input type="number" name="quantity" hidden value="1">
                             <input type="text" name="quantityMode" hidden value="relative">
-                            <button type="submit" data-test-id="{{item.product.id}}-increase-quantity"
-                                type="button">+</button>
+                            <button type="submit" data-test-id="increase-quantity" type="button">+</button>
                         </form>
                     </div>
                     <p>Total: £{{ (item.product.price * item.quantity) | pounds }}</p>
