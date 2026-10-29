@@ -4,6 +4,7 @@ import { healthController } from "./controllers/health";
 import basketController from "./controllers/basket";
 import registerController from "./controllers/register";
 import { productsController } from "./controllers/products";
+import { confirmationController } from "./controllers/confirmation";
 import cookieParser from "cookie-parser";
 import loginController from "./controllers/login";
 import { logoutController } from "./controllers/logout";
@@ -17,6 +18,23 @@ export function createApp(): Express {
 
 	app.use(cookieParser());
 	app.use(bodyParser.urlencoded({ extended: true }));
+	app.use((req, res, next) => {
+		if (["POST", "PUT", "PATCH", "DELETE"].includes(req.method)) {
+			const origin = req.get("Origin");
+			const host = req.get("host");
+			if (!origin || !host) {
+				return res.sendStatus(403);
+			}
+			try {
+				if (new URL(origin).origin !== new URL(`${req.protocol}://${host}`).origin) {
+					return res.sendStatus(403);
+				}
+			} catch {
+				return res.sendStatus(403);
+			}
+		}
+		next();
+	});
 	app.use(async (req, res, next) => {
 		if (req.cookies.JWT_TOKEN) {
 			const token = req.cookies.JWT_TOKEN;
@@ -69,6 +87,7 @@ export function createApp(): Express {
 	app.get("/", productsController);
 	app.get("/products", productsController);
 
+	app.get("/confirmation", confirmationController);
 	app.use("/basket", basketController);
 
 	app.use(express.static("public"));
