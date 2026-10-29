@@ -42,5 +42,4 @@ router.post("/", async (req: Request, res: Response) => {
 
     res.redirect("/");
 });
-
 export default router;

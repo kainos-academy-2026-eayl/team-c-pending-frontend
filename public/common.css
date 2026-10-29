@@ -44,6 +44,23 @@ input {
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    height: 40px;
+}
+
+.password-field {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.password-field input {
+    flex: 1;
+    min-width: 0;
+}
+
+.password-field button {
+    width: auto;
+    flex-shrink: 0;
 }
 
 .main-button {
