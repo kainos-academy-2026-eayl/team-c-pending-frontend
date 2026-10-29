@@ -15,7 +15,7 @@
             <h1><a href="/">Pending Studios</a></h1>
             <div class="links">
                 {% if me %}
-                <a href="/account"><img src="/account.svg" alt="Account"></a>
+                <a href="/account" data-test-id="profile-button"><img src="/account.svg" alt="Account"></a>
                 <a href="/basket"><img src="/basket.svg" alt="Basket">{% if me.basketCount != 0 %}<span
                         class="basket-count">{{ me.basketCount }}</span>{% endif %}</a>
                 {% else %}
