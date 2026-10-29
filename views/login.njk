@@ -10,8 +10,12 @@
     <input type="email" id="email" name="email">
     <br>
     <label for="password">Password:</label><br>
-    <input type="password" id="password" name="password">
+    <div class="password-field">
+        <input type="password" id="password" name="password">
+        <button class="main-button" type="button" id="toggle-password" aria-controls="password">Show</button>
+    </div>
     <br>
     <button class="main-button" type="submit">Login</button>
 </form>
+<script defer src="/showPassword.js"></script>
 {% endblock %}

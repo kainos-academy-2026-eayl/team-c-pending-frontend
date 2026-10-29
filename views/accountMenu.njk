@@ -1,22 +1,31 @@
 {% extends "layout.njk" %}
+{% block head %}
+{% endblock %}
 {% block title %}Account Menu{% endblock %}
 {% block header %}Account Menu{% endblock %}
 {% block content %}
-<center>
-    <h2>Order history</h2>
-    <div class="orders-container">
-        {% for order in orders %}
-        <div class="product">
-            <h3>Order ID: {{ order.orderID }}</h3>
-            <p>Price: £{{ order.price }}</p>
-            <p>Items: {{ order.items }}</p>
-            <p>Customer ID: {{ order.customerID }}</p>
+<main>
+    <center>
+        <h2>Account details</h2>
+        <p>Customer ID: {{ customerId }}</p>
+        <p>Name: {{ firstName }} {{ lastName }}</p>
+        <p>Email: {{ email }}</p>
+
+        <h2>Order history</h2>
+        <div class="orders-container">
+            {% for order in orders %}
+            <div class="product">
+                <h3>Order ID: {{ order.orderID }}</h3>
+                <p>Price: £{{ order.price }}</p>
+                <p>Items: {{ order.items }}</p>
+                <p>Customer ID: {{ order.customerID }}</p>
+            </div>
+            {% endfor %}
+            <h2>Account controls</h2>
+            <form action="/logout" method="post">
+                <button class="main-button" type="submit">Logout</button>
+            </form>
         </div>
-        {% endfor %}
-    </div>
-    <h2>Account controls</h2>
-    <form action="/logout" method="post">
-        <button type="submit">Logout</button>
-    </form>
-</center>
+    </center>
+</main>
 {% endblock %}

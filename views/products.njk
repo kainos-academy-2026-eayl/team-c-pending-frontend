@@ -15,11 +15,14 @@
 <div class="products-container">
     {% for product in products %}
     <div class="product">
-        <h2>{{ product.name }}</h2>
-        <p>Price: £{{ product.price | pounds }}</p>
-        <p>{{ product.description }}</p>
-        <p>Category: {{ product.category }}</p>
-        <form action="/basket" method="post">
+        <div>
+            <img src="{{ product.image }}" alt="{{ product.name }}">
+            <h2>{{ product.name }}</h2>
+            <p>{{ product.description }}</p>
+        </div>
+
+        <form action="/basket" method="post" class="add-to-basket-form">
+            <span>£{{ product.price | pounds }}</span>
             <input type="number" name="id" hidden value="{{product.id}}">
             <input type="number" name="quantity" hidden value="1">
             <input type="text" name="quantityMode" hidden value="relative">

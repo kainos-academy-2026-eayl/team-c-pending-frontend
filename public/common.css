@@ -4,13 +4,16 @@
 
 body {
     font-family: Arial, sans-serif;
-    background-color: var(--background);
+    background-image: url("https://oceanexplorer.noaa.gov/wp-content/uploads/2013/10/explored-hires-scaled.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
     margin: 0;
     padding: 0;
+    height: 100vh;
 }
 
 .main-page-form {
-    background-color: #ffffff;
     padding: 20px;
     margin: 50px auto;
     box-sizing: border-box;
@@ -18,6 +21,15 @@ body {
     max-width: 340px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+    backdrop-filter: blur(10px) brightness(75%);
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
 }
 
 label {
@@ -32,6 +44,23 @@ input {
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    height: 40px;
+}
+
+.password-field {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.password-field input {
+    flex: 1;
+    min-width: 0;
+}
+
+.password-field button {
+    width: auto;
+    flex-shrink: 0;
 }
 
 .main-button {
@@ -43,6 +72,7 @@ input {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .main-button button:hover {
@@ -50,7 +80,6 @@ input {
 }
 
 header {
-    background: linear-gradient(90deg, rgba(42, 123, 155, 1) 0%, rgba(46, 125, 50, 1) 100%);
     color: white;
     padding: 10px 0;
     text-align: center;
@@ -58,9 +87,10 @@ header {
     align-items: center;
     justify-content: space-around;
 
-    h1 {
-        font-family: didot, serif;
-    }
+    backdrop-filter: blur(10px) brightness(75%);
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .links {
@@ -102,20 +132,59 @@ button.link:hover {
     text-decoration: underline;
 }
 
-.product {
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: calc(100% - 40px);
-    max-width: 300px;
-    box-sizing: border-box;
-}
-
 .orders-container {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
     justify-content: center;
     padding: 20px;
+}
+
+.content {
+    overflow: scroll;
+    height: 100vh;
+}
+
+.basket-count {
+    background-color: red;
+    padding: 5px;
+    border-radius: 20px;
+}
+
+main {
+    width: 500px;
+    max-width: 95%;
+    margin: 0 auto;
+
+    margin-top: 10px;
+
+    padding: 20px;
+    box-sizing: border-box;
+    width: calc(100% - 32px);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+    backdrop-filter: blur(10px) brightness(75%);
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
+.product {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: white;
+    backdrop-filter: blur(10px) brightness(75%);
+
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 200px;
+    text-align: center;
+    border: 2px solid rgba(255, 255, 255, 0.3);
 }
