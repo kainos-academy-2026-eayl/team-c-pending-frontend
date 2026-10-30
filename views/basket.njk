@@ -22,14 +22,14 @@ Basket
                     <div class="quantity-controls">
                         Quantity:
                         <form action="/basket" method="post">
-                            <input type="number" name="productID" hidden value="{{item.product.productID}}">
+                            <input type="number" name="productId" hidden value="{{item.product.productId}}">
                             <input type="number" name="quantity" hidden value="-1">
                             <input type="text" name="quantityMode" hidden value="relative">
                             <button type="submit" data-test-id="decrease-quantity" type="button">-</button>
                         </form>
                         <span data-test-id="quantity">{{ item.quantity }}</span>
                         <form action="/basket" method="post">
-                            <input type="number" name="productID" hidden value="{{item.product.productID}}">
+                            <input type="number" name="productId" hidden value="{{item.product.productId}}">
                             <input type="number" name="quantity" hidden value="1">
                             <input type="text" name="quantityMode" hidden value="relative">
                             <button type="submit" data-test-id="increase-quantity" type="button">+</button>

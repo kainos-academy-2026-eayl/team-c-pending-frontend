@@ -21,8 +21,8 @@ router.post("/", async (req, res) => {
         return res.redirect("/login");
     }
 
-    const { productID, quantityMode, quantity } = z.object({
-        productID: z.string().transform(Number),
+    const { id, quantityMode, quantity } = z.object({
+        id: z.string().transform(Number),
         quantityMode: z.enum(["relative", "absolute"]),
         quantity: z.string().transform(Number)
     }).parse(req.body);
@@ -31,13 +31,13 @@ router.post("/", async (req, res) => {
     if (quantityMode === "relative") {
         const r = await fetch(`${process.env.API_ADDRESS}/basket`, { headers: { "Authorization": `Bearer ${req.cookies.JWT_TOKEN}` } }).then(res => res.json());
         const basket = Basket.parse(r);
-        const oldQuantity = basket.find(item => item.productID === productID)?.quantity || 0;
+        const oldQuantity = basket.find(item => item.id === id)?.quantity || 0;
         newQuantity = oldQuantity + quantity;
     } else {
         newQuantity = quantity;
     }
 
-    const apiRes = await fetch(`${process.env.API_ADDRESS}/basket/${productID}`, {
+    const apiRes = await fetch(`${process.env.API_ADDRESS}/basket/${id}`, {
         method: "POST",
         headers: { "Authorization": `Bearer ${req.cookies.JWT_TOKEN}`, "Content-Type": "application/json" },
         body: JSON.stringify({
