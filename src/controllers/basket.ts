@@ -16,7 +16,7 @@ router.get("/", async (req, res) => {
     res.setHeader("Pragma", "no-cache");
     res.setHeader("Expires", "0");
 
-    res.render("basket.njk", { items: basket, total: basket.reduce((sum, item) => sum + item.product.price * item.quantity, 0) });
+    res.render("basket.njk", { items: basket.sort((a, b) => a.product.name.localeCompare(b.product.name)), total: basket.reduce((sum, item) => sum + item.product.price * item.quantity, 0), error: req.query.error });
 });
 
 router.post("/", async (req, res) => {

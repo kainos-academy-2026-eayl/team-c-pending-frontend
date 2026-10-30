@@ -20,6 +20,9 @@ router.post('/', async (req: Request, res: Response) => {
     });
 
     if (!response.ok) {
+        if (response.status === 409) {
+            return res.redirect("/basket?error=" + encodeURIComponent("Unfortunately, the items in your basket are no longer available in the requested quantity."));
+        }
         const error = await response.json();
         return res.status(response.status).json(error);
     }
