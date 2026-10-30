@@ -11,5 +11,5 @@ export default z.object({
     })),
     type: z.string(),
     status: z.string(),
-    date: z.date(),
+    date: z.string(),
 });

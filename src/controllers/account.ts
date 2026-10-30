@@ -11,7 +11,9 @@ export const accountController = async (req: Request, res: Response) => {
 
         const orders = z.array(Order).parse(await response.json());
 
-        res.render("accountMenu.njk", { orders, firstName: user.firstName, lastName: user.lastName, email: user.email, customerId: user.customerId });
+        res.render("accountMenu.njk",
+            { orders, firstName: user.firstName, lastName: user.lastName, email: user.email, customerId: user.customerId }
+        );
     } else {
         res.redirect("/login");
     }
