@@ -27,7 +27,7 @@ router.post("/", async (req, res) => {
     if (quantityMode === "relative") {
         const r = await fetch(`${process.env.API_ADDRESS}/basket`, { headers: { "Authorization": `Bearer ${req.cookies.JWT_TOKEN}` } }).then(res => res.json());
         const basket = Basket.parse(r);
-        const oldQuantity = basket.find(item => item.productId === id)?.quantity || 0;
+        const oldQuantity = basket.find(item => item.productID === id)?.quantity || 0;
         newQuantity = oldQuantity + quantity;
     } else {
         newQuantity = quantity;

@@ -23,7 +23,7 @@
 
         <form action="/basket" method="post" class="add-to-basket-form">
             <span>£{{ product.price | pounds }}</span>
-            <input type="number" name="id" hidden value="{{product.id}}">
+            <input type="number" name="id" hidden value="{{product.productID}}">
             <input type="number" name="quantity" hidden value="1">
             <input type="text" name="quantityMode" hidden value="relative">
             <button type="submit" class="main-button" type="button">Add to Basket</button>
