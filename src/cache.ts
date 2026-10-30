@@ -13,6 +13,6 @@ export default async function cache(name: string, fn: () => ReturnType<typeof fe
     if (!value.ok) {
         throw new Error("Failed to fetch cache value");
     }
-    cacheMap.set(name, { value: value.json(), timestamp: Date.now(), ttl: 600000 });
+    cacheMap.set(name, { value: value.json(), timestamp: Date.now(), ttl: 60_000 });
     return cacheMap.get(name)?.value;
 }

@@ -14,19 +14,26 @@
 </div>
 <div class="products-container">
     {% for product in products %}
-    <div class="product">
+    <div class="product" data-test-id="product">
         <div>
             <img src="{{ product.image }}" alt="{{ product.name }}">
-            <h2>{{ product.name }}</h2>
+            <h2 data-test-id="product-name">{{ product.name }}</h2>
             <p>{{ product.description }}</p>
         </div>
 
         <form action="/basket" method="post" class="add-to-basket-form">
             <span>£{{ product.price | pounds }}</span>
-            <input type="number" name="id" hidden value="{{product.id}}">
+            <input type="number" name="productID" hidden value="{{product.productID}}">
             <input type="number" name="quantity" hidden value="1">
             <input type="text" name="quantityMode" hidden value="relative">
-            <button type="submit" class="main-button" type="button">Add to Basket</button>
+            {% if product.quantity <= 0 %}
+            <button type="submit" data-test-id="add-to-basket-button" class="main-button disabled-button"
+                type="button">Out of
+                stock</button>
+            {% else %}
+            <button type="submit" data-test-id="add-to-basket-button" class="main-button" type="button">Add to
+                Basket</button>
+            {% endif %}
         </form>
     </div>
 

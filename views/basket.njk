@@ -8,32 +8,37 @@ Basket
 {% block content %}
 <main>
     <h1>Basket</h1>
+    {% if error %}
+    <p style="color: red;">{{ error }}</p>
+    {% endif %}
     {% if items|length %}
     <ul class="basket-products-list">
         {% for item in items %}
-        <li>
+        <li data-test-id="product">
             <div class="space-between">
                 <div>
-                    <h3>{{ item.product.name }}</h3>
-                    <p>{{ item.product.name }}</p>
+                    <h3 data-test-id="product-name">{{ item.product.name }}</h3>
+                    <p>{{ item.product.description }}</p>
                 </div>
                 <div class="text-align-right">
                     <p>Price: £{{ item.product.price | pounds }}</p>
                     <div class="quantity-controls">
                         Quantity:
                         <form action="/basket" method="post">
-                            <input type="number" name="id" hidden value="{{item.product.id}}">
+                            <input type="number" name="productID" hidden value="{{item.product.productID}}">
                             <input type="number" name="quantity" hidden value="-1">
                             <input type="text" name="quantityMode" hidden value="relative">
-                            <button type="submit" type="button">-</button>
+                            <button type="submit" data-test-id="decrease-quantity" type="button">-</button>
                         </form>
-                        <span>{{ item.quantity }}</span>
+                        <span data-test-id="quantity">{{ item.quantity }}</span>
+                        {% if item.quantity < item.product.quantity %}
                         <form action="/basket" method="post">
-                            <input type="number" name="id" hidden value="{{item.product.id}}">
+                            <input type="number" name="productID" hidden value="{{item.product.productID}}">
                             <input type="number" name="quantity" hidden value="1">
                             <input type="text" name="quantityMode" hidden value="relative">
-                            <button type="submit" type="button">+</button>
+                            <button type="submit" data-test-id="increase-quantity" type="button">+</button>
                         </form>
+                        {% endif %}
                     </div>
                     <p>Total: £{{ (item.product.price * item.quantity) | pounds }}</p>
                 </div>
@@ -43,7 +48,9 @@ Basket
         {% endfor %}
         <li>
             <h2>Total: £{{ total | pounds }}</h2>
-            <button class="main-button">Proceed to Checkout</button>
+            <form action="/checkout" method="post">
+                <button class="main-button" type="submit">Proceed to Checkout</button>
+            </form>
         </li>
     </ul>
     {% else %}
@@ -51,3 +58,7 @@ Basket
     {% endif %}
     {% endblock %}
 </main>
+
+<script>
+
+</script>

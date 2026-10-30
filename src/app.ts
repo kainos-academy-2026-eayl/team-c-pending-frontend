@@ -6,6 +6,7 @@ import registerController from "./controllers/register";
 import { productsController } from "./controllers/products";
 import { confirmationController } from "./controllers/confirmation";
 import cookieParser from "cookie-parser";
+import checkoutController from "./controllers/checkout";
 import loginController from "./controllers/login";
 import { logoutController } from "./controllers/logout";
 import { accountController } from "./controllers/account";
@@ -83,6 +84,8 @@ export function createApp(): Express {
 
 	app.use("/login", loginController);
 	app.use("/register", registerController);
+
+	app.use("/checkout", checkoutController);
 
 	app.get("/", productsController);
 	app.get("/products", productsController);
