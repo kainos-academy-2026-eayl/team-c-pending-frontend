@@ -12,6 +12,5 @@ export const productsController = async (req: Request, res: Response) => {
         productData = await fetch(`${process.env.API_ADDRESS}/products`);
     }
     const products = z.array(Product).parse(await productData.json()).sort((a, b) => a.name.localeCompare(b.name));
-    console.log(products);
     res.render("products.njk", { products, currentCategory: req.query.category, categories: await cache(`categories-all`, () => fetch(`${process.env.API_ADDRESS}/products/categories`)) });
 };
