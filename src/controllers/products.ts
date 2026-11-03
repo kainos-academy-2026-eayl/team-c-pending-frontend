@@ -1,9 +1,11 @@
-import type { Request, Response } from "express";
+import { Router, type Request, type Response } from "express";
 import cache from "../cache";
 import { z } from "zod";
 import Product from "../schemas/product.schema";
 
-export const productsController = async (req: Request, res: Response) => {
+const router = Router();
+
+router.get("/", async (req: Request, res: Response) => {
     let productData: globalThis.Response;
     if (req.query.category) {
         const category = req.query.category.toString();
@@ -12,5 +14,50 @@ export const productsController = async (req: Request, res: Response) => {
         productData = await fetch(`${process.env.API_ADDRESS}/products`);
     }
     const products = z.array(Product).parse(await productData.json()).sort((a, b) => a.name.localeCompare(b.name));
-    res.render("products.njk", { products, currentCategory: req.query.category, categories: await cache(`categories-all`, () => fetch(`${process.env.API_ADDRESS}/products/categories`)) });
-};
+    res.render("products.njk", { nextBackURL: req.originalUrl, products, currentCategory: req.query.category, categories: await cache(`categories-all`, () => fetch(`${process.env.API_ADDRESS}/products/categories`)) });
+});
+
+router.get("/:id", async (req: Request, res: Response) => {
+    const id = req.params.id as string;
+    const productData = await fetch(`${process.env.API_ADDRESS}/products/${encodeURIComponent(id)}`);
+    const product = Product.parse(await productData.json());
+    res.render("product.njk", { product });
+});
+
+router.get("/:id/add_review", async (req: Request, res: Response) => {
+    const id = req.params.id as string;
+    const productData = await fetch(`${process.env.API_ADDRESS}/products/${encodeURIComponent(id)}`);
+    const product = Product.parse(await productData.json());
+    res.render("review.njk", { product, rating: req.query.rating, stars: Array(5).fill(0).map((_, i) => i < Number(req.query.rating) ? '/star_full.svg' : '/star_empty.svg') });
+});
+
+router.get("/:id/add_review_message", async (req: Request, res: Response) => {
+    const id = req.params.id as string;
+    const productData = await fetch(`${process.env.API_ADDRESS}/products/${encodeURIComponent(id)}`);
+    const product = Product.parse(await productData.json());
+    res.render("addReviewMessage.njk", { product, rating: req.query.rating });
+});
+
+router.post("/:id/add_review", async (req: Request, res: Response) => {
+    const input = z.object({
+        rating: z.string().transform(Number),
+        message: z.string().optional()
+    }).parse(req.body);
+    const id = req.params.id as string;
+    const response = await fetch(`${process.env.API_ADDRESS}/products/${encodeURIComponent(id)}/reviews`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(input)
+    });
+    if (!response.ok) {
+        if (response.status === 400) {
+            return res.redirect(`/products/${id}/add_review_message?error=${encodeURIComponent("Invalid review")}&rating=${req.body.rating}`);
+        }
+        return res.status(response.status).send(await response.text());
+    }
+    res.redirect(`/products/${id}`);
+});
+
+export default router;

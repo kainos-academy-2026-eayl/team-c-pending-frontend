@@ -18,7 +18,7 @@ body {
     margin: 50px auto;
     box-sizing: border-box;
     width: calc(100% - 32px);
-    max-width: 340px;
+    max-width: 600px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 
@@ -193,4 +193,40 @@ main {
     background-color: darkred;
     cursor: not-allowed;
     pointer-events: none;
+}
+
+a {
+    color: white;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.space-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-flow: wrap;
+}
+
+.no-background {
+    background: none;
+}
+
+textarea {
+    width: 100%;
+    background: none;
+    color: white;
+    box-sizing: border-box;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 5px;
+    resize: none;
+    height: 10em;
+}
+
+.back-group {
+    display: flex;
+    align-items: center;
 }
