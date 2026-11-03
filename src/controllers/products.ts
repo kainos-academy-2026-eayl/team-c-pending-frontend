@@ -20,6 +20,9 @@ router.get("/", async (req: Request, res: Response) => {
 router.get("/:id", async (req: Request, res: Response) => {
     const id = req.params.id as string;
     const productData = await fetch(`${process.env.API_ADDRESS}/products/${encodeURIComponent(id)}`);
+    if (!productData.ok) {
+        return res.status(productData.status).send(productData.status === 404 ? "Product not found" : "Unable to load product");
+    }
     const product = ProductWithReviews.parse(await productData.json());
     const stars = Math.round(product.reviews.reduce((acc, review) => acc + review.rating, 0)/product.reviews.length);
     res.render("product.njk", { product, stars });
