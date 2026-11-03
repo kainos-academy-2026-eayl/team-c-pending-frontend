@@ -49,10 +49,16 @@ router.post("/:id/add_review", async (req: Request, res: Response) => {
         if (!res.locals.me) {
         return res.redirect("/login");
     }
-    const input = z.object({
-        rating: z.string().transform(Number),
+    const parsedInput = z.object({
+        rating: z.string().regex(/^[1-5]$/, "Choose a rating from 1 to 5").transform(Number),
         message: z.string().optional()
-    }).parse(req.body);
+    }).safeParse(req.body);
+    if (!parsedInput.success) {
+        return res.status(400).json({
+            errors: parsedInput.error.issues.map(issue => ({ field: issue.path.join("."), message: issue.message }))
+        });
+    }
+    const input = parsedInput.data;
     const id = req.params.id as string;
     const response = await fetch(`${process.env.API_ADDRESS}/products/${encodeURIComponent(id)}/reviews`, {
         method: "POST",
