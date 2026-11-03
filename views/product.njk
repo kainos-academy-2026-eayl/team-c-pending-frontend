@@ -47,8 +47,7 @@
                 <input type="text" name="quantityMode" hidden value="relative">
                 {% if product.quantity <= 0 %}
                 <button type="submit" data-test-id="add-to-basket-button" class="main-button disabled-button"
-                    type="button">Out of
-                    stock</button>
+                    disabled>Out of stock</button>
                 {% else %}
                 <button type="submit" data-test-id="add-to-basket-button" class="main-button" type="button">Add to
                     Basket</button>
