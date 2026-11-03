@@ -14,6 +14,7 @@ import adminController from "./controllers/admin";
 import bodyParser from "body-parser";
 import "dotenv/config";
 import User from "./schemas/user.schema";
+import { passwordResetController } from "./controllers/passwordReset";
 
 export function createApp(): Express {
 	const app = express();
@@ -85,6 +86,9 @@ export function createApp(): Express {
 
 	app.use("/login", loginController);
 	app.use("/register", registerController);
+	app.get("/password-reset", passwordResetController);
+
+	app.use("/checkout", checkoutController);
 
 	app.use("/checkout", checkoutController);
 
