@@ -188,3 +188,9 @@ main {
     text-align: center;
     border: 2px solid rgba(255, 255, 255, 0.3);
 }
+
+.disabled-button {
+    background-color: darkred;
+    cursor: not-allowed;
+    pointer-events: none;
+}
