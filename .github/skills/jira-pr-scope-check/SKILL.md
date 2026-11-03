@@ -66,6 +66,8 @@ Do not silently remove, revert, stash, split commits, rewrite history, edit tick
 
 ## 5. Carry the result into the PR
 
+Start every proposed and published PR body with the confirmed Jira ticket link(s) on the first non-empty line, before headings, summaries, validation, or exception sections. Use `Jira: [KEY](ticket-url)` for one ticket and list every confirmed in-scope ticket on that line for multiple tickets. Use the verified Jira site URLs, not guessed links. Preserve this placement when updating a PR, including draft PRs and approved overrides. Before publication and in the live PR read-back, verify that these top-of-body links match the assessed tickets; correct missing or misplaced links before claiming the PR workflow succeeded.
+
 For PASS, include a short Jira scope section linking confirmed tickets and summarizing the requirement mapping and validation.
 
 For an approved override, include this conspicuous section in both the proposed PR body and the published body:
