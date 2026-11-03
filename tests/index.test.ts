@@ -8,6 +8,16 @@ describe("GET /health", () => {
 
 		expect(response.body).toHaveProperty("status", "ok");
 	});
+
+	describe("GET /confirmation", () => {
+		it("renders the confirmation page using the Express response", async () => {
+			const response = await request(createApp())
+				.get("/confirmation")
+				.expect(200);
+
+			expect(response.text).toContain("Your order is confirmed");
+		});
+	});
 });
 
 describe("CSRF protection", () => {

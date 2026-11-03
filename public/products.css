@@ -1,64 +1,62 @@
 .products-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+	justify-content: center;
 }
 
 .product img {
-    box-sizing: border-box;
-    max-width: 100%;
-    border-radius: 10px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+	box-sizing: border-box;
+	max-width: 100%;
+	border-radius: 10px;
+	border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .categories-container a.active {
-
-    background-color: #2e7d3283;
+	background-color: #2e7d3283;
 }
 
 .categories-container {
-    display: flex;
-    flex-wrap: wrap;
-    padding: 10px 0;
-    gap: 10px;
-    justify-content: center;
+	display: flex;
+	flex-wrap: wrap;
+	padding: 10px 0;
+	gap: 10px;
+	justify-content: center;
 }
 
 .categories-container a {
-    text-decoration: none;
+	text-decoration: none;
 
-    border-radius: 5px;
-    padding: 10px;
+	padding: 10px;
 
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    backdrop-filter: blur(10px) brightness(75%);
+	border-radius: 10px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	border: 2px solid rgba(255, 255, 255, 0.3);
+	backdrop-filter: blur(10px) brightness(75%);
 
-    color: white;
+	color: white;
 }
 
 .add-to-basket-form {
-    display: flex;
-    align-items: center;
-    padding-left: 10px;
-    gap: 10px;
-    background: rgba(255, 255, 255, 0.334);
+	display: flex;
+	align-items: center;
+	padding-left: 10px;
+	gap: 10px;
+	background: rgba(255, 255, 255, 0.334);
 
-    border-radius: 5px;
-    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+	border-radius: 5px;
+	box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
 }
 
 h2 {
-    text-align: center;
-    font-size: 1.5em;
-    margin-bottom: 10px;
-    font-weight: bold;
+	text-align: center;
+	font-size: 1.5em;
+	margin-bottom: 10px;
+	font-weight: bold;
 }
 
 p {
-    text-align: center;
-    font-size: 1em;
-    margin-bottom: 10px;
+	text-align: center;
+	font-size: 1em;
+	margin-bottom: 10px;
 }

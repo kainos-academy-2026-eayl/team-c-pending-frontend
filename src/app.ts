@@ -1,16 +1,16 @@
+import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
 import express, { type Express } from "express";
 import nunjucks from "nunjucks";
-import { healthController } from "./controllers/health";
+import { accountController } from "./controllers/account";
 import basketController from "./controllers/basket";
-import registerController from "./controllers/register";
-import { productsController } from "./controllers/products";
-import { confirmationController } from "./controllers/confirmation";
-import cookieParser from "cookie-parser";
 import checkoutController from "./controllers/checkout";
+import { confirmationController } from "./controllers/confirmation";
+import { healthController } from "./controllers/health";
 import loginController from "./controllers/login";
 import { logoutController } from "./controllers/logout";
-import { accountController } from "./controllers/account";
-import bodyParser from "body-parser";
+import { productsController } from "./controllers/products";
+import registerController from "./controllers/register";
 import "dotenv/config";
 import User from "./schemas/user.schema";
 
@@ -27,7 +27,9 @@ export function createApp(): Express {
 				return res.sendStatus(403);
 			}
 			try {
-				if (new URL(origin).origin !== new URL(`${req.protocol}://${host}`).origin) {
+				if (
+					new URL(origin).origin !== new URL(`${req.protocol}://${host}`).origin
+				) {
 					return res.sendStatus(403);
 				}
 			} catch {
@@ -41,8 +43,8 @@ export function createApp(): Express {
 			const token = req.cookies.JWT_TOKEN;
 			const me = await fetch(`${process.env.API_ADDRESS}/me`, {
 				headers: {
-					Authorization: `Bearer ${token}`
-				}
+					Authorization: `Bearer ${token}`,
+				},
 			});
 			if (me.status === 200) {
 				const meData = User.parse(await me.json());
@@ -76,9 +78,7 @@ export function createApp(): Express {
 		noCache: true,
 	});
 
-	env.addFilter('pounds', function (num, length) {
-		return num.toFixed(length || 2);
-	});
+	env.addFilter("pounds", (num, length) => num.toFixed(length || 2));
 
 	app.get("/health", healthController);
 
@@ -98,5 +98,4 @@ export function createApp(): Express {
 	app.post("/logout", logoutController);
 
 	return app;
-
 }
