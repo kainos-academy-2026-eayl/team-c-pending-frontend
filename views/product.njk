@@ -60,7 +60,8 @@
                 Leave a review:
                 <div class="stars">
                     {% for i in range(5) %}
-                    <a href="/products/{{product.productID}}/add_review?rating={{ i + 1 }}"><img src="/star_empty.svg"
+                    <a data-test-id="add-review-link-{{i}}"
+                        href="/products/{{product.productID}}/add_review?rating={{ i + 1 }}"><img src="/star_empty.svg"
                             alt="Star"></a>
                     {% endfor %}
                 </div>
@@ -69,7 +70,7 @@
 
             <div class="reviews">
                 {% for review in product.reviews %}
-                <div class="review">
+                <div class="review" data-test-id="review">
                     <div class="space-between">
                         <div class="stars">
                             {% if review.rating >= 1 %}
@@ -98,9 +99,10 @@
                             <img src="/star_empty.svg" alt="Star">
                             {% endif %}
                         </div>
-                        <div>{{ review.customer.firstName }} {{ review.customer.lastName }}</div>
+                        <div data-test-id="review-author">{{ review.customer.firstName }} {{ review.customer.lastName }}
+                        </div>
                     </div>
-                    <p>{{ review.comment }}</p>
+                    <p data-test-id="review-comment">{{ review.comment }}</p>
                 </div>
                 {% endfor %}
             </div>
