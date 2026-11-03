@@ -12,7 +12,11 @@ router.get("/", async (req, res) => {
 
     const basket = Basket.parse(await fetch(`${process.env.API_ADDRESS}/basket`, { headers: { "Authorization": `Bearer ${req.cookies.JWT_TOKEN}` } }).then(res => res.json()));
 
-    res.render("basket.njk", { items: basket, total: basket.reduce((sum, item) => sum + item.product.price * item.quantity, 0) });
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+
+    res.render("basket.njk", { items: basket.sort((a, b) => a.product.name.localeCompare(b.product.name)), total: basket.reduce((sum, item) => sum + item.product.price * item.quantity, 0), error: req.query.error });
 });
 
 router.post("/", async (req, res) => {

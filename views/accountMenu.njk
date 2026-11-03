@@ -17,7 +17,12 @@
             <div class="product">
                 <h3>Order ID: {{ order.orderID }}</h3>
                 <p>Price: £{{ order.price }}</p>
-                <p>Items: {{ order.items }}</p>
+                <p>Items:
+                    {% for item in order.orderItems %}
+                <p>Product ID: {{ item.productID }}, Quantity: {{ item.quantity }}, Unit Price: £{{ item.unitPrice }},
+                    Status: {{ item.itemStatus }}</p>
+                {% endfor %}
+                </p>
                 <p>Customer ID: {{ order.customerID }}</p>
             </div>
             {% endfor %}
