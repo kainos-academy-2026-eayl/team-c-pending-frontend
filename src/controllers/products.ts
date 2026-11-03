@@ -42,7 +42,7 @@ router.get("/:id/add_review_message", async (req: Request, res: Response) => {
     const id = req.params.id as string;
     const productData = await fetch(`${process.env.API_ADDRESS}/products/${encodeURIComponent(id)}`);
     const product = Product.parse(await productData.json());
-    res.render("addReviewMessage.njk", { product, rating: req.query.rating });
+    res.render("addReviewMessage.njk", { product, rating: req.query.rating, error: req.query.error });
 });
 
 router.post("/:id/add_review", async (req: Request, res: Response) => {
