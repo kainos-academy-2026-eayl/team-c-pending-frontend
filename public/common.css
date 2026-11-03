@@ -95,6 +95,7 @@ header {
 
 .links {
     display: flex;
+    align-items: center;
     gap: 30px;
     justify-content: center;
     flex-flow: row wrap;

@@ -1,0 +1,100 @@
+.admin-portal {
+    max-width: 900px;
+}
+
+.admin-portal > h2 {
+    text-align: center;
+}
+
+.admin-navigation {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.admin-portal a {
+    color: white;
+}
+
+.admin-navigation a {
+    text-decoration: none;
+    padding: 10px 16px;
+    border: 1px solid white;
+    border-radius: 5px;
+}
+
+.admin-navigation a[aria-current="page"] {
+    background-color: #2e7d32;
+    font-weight: bold;
+}
+
+.admin-filters,
+.admin-edit-form {
+    margin-bottom: 24px;
+}
+
+.admin-filters select,
+.admin-edit-form textarea {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font: inherit;
+}
+
+.admin-filters a {
+    display: inline-block;
+    margin-top: 12px;
+}
+
+.admin-edit-form fieldset {
+    min-width: 0;
+    padding: 16px;
+    border-radius: 5px;
+}
+
+.admin-edit-form fieldset > form + form {
+    margin-top: 12px;
+}
+
+.admin-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.admin-actions .main-button {
+    flex: 1;
+    width: auto;
+}
+
+.admin-delete-button {
+    display: inline-block;
+    padding: 8px 12px;
+    background-color: #a12121;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 5px;
+    font: inherit;
+    font-size: 0.875rem;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.admin-delete-button:hover {
+    background-color: #801919;
+}
+
+.admin-edit-form button[name="hide"][value="true"] {
+    background-color: #a12121;
+    border-color: #a12121;
+}
+
+.admin-edit-form button[name="hide"][value="true"]:hover {
+    background-color: #801919;
+    border-color: #801919;
+}
