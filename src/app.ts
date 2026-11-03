@@ -87,8 +87,10 @@ export function createApp(): Express {
 
 	app.use("/checkout", checkoutController);
 
-	app.get("/", productsController);
-	app.get("/products", productsController);
+	app.get("/", (_, res) => {
+		res.redirect("/products");
+	});
+	app.use("/products", productsController);
 
 	app.get("/confirmation", confirmationController);
 	app.use("/basket", basketController);
