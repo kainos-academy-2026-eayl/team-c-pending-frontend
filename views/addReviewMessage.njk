@@ -2,10 +2,8 @@
 {% block title %}Leave a Review{% endblock %}
 {% block content %}
 <form method="POST" action="/products/{{ product.productID }}/add_review" class="main-page-form">
-    {% if backURL %}
     <a class="back-group" href="/products/{{ product.productID }}/add_review?rating={{ rating }}"><img class="back-icon"
             src="/back.svg" alt="Back">Back</a>
-    {% endif %}
     <h1>What did you think of {{ product.name }}?</h1>
     {% if error %}
     <p style="color: red;">{{ error }}</p>

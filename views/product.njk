@@ -2,6 +2,7 @@
 {% block head %}
 <link rel="stylesheet" href="/product.css">
 {% endblock %}
+{% block title %}{{ product.name }}{% endblock %}
 {% block content %}
 <main>
     <div class="horizontal">
@@ -11,12 +12,32 @@
         <div class="product-description">
             <h1>{{ product.name }}</h1>
             <div class="stars">
+                {% if stars >= 1 %}
                 <img src="/star_full.svg" alt="Star">
+                {% else %}
+                <img src="/star_empty.svg" alt="Star">
+                {% endif %}
+                {% if stars >= 2 %}
                 <img src="/star_full.svg" alt="Star">
+                {% else %}
+                <img src="/star_empty.svg" alt="Star">
+                {% endif %}
+                {% if stars >= 3 %}
                 <img src="/star_full.svg" alt="Star">
+                {% else %}
+                <img src="/star_empty.svg" alt="Star">
+                {% endif %}
+                {% if stars >= 4 %}
                 <img src="/star_full.svg" alt="Star">
+                {% else %}
+                <img src="/star_empty.svg" alt="Star">
+                {% endif %}
+                {% if stars >= 5 %}
                 <img src="/star_full.svg" alt="Star">
-                (10)
+                {% else %}
+                <img src="/star_empty.svg" alt="Star">
+                {% endif %}
+                ({{ product.reviews.length }})
             </div>
             <p>{{ product.description }}</p>
             <form action="/basket" method="post" class="add-to-basket-form">
@@ -44,16 +65,40 @@
                     {% endfor %}
                 </div>
             </div>
+            <br>
 
             <div class="reviews">
                 {% for review in product.reviews %}
                 <div class="review">
-                    <div class="stars">
-                        <img src="/star_full.svg" alt="Star">
-                        <img src="/star_full.svg" alt="Star">
-                        <img src="/star_full.svg" alt="Star">
-                        <img src="/star_full.svg" alt="Star">
-                        <img src="/star_full.svg" alt="Star">
+                    <div class="space-between">
+                        <div class="stars">
+                            {% if review.rating >= 1 %}
+                            <img src="/star_full.svg" alt="Star">
+                            {% else %}
+                            <img src="/star_empty.svg" alt="Star">
+                            {% endif %}
+                            {% if review.rating >= 2 %}
+                            <img src="/star_full.svg" alt="Star">
+                            {% else %}
+                            <img src="/star_empty.svg" alt="Star">
+                            {% endif %}
+                            {% if review.rating >= 3 %}
+                            <img src="/star_full.svg" alt="Star">
+                            {% else %}
+                            <img src="/star_empty.svg" alt="Star">
+                            {% endif %}
+                            {% if review.rating >= 4 %}
+                            <img src="/star_full.svg" alt="Star">
+                            {% else %}
+                            <img src="/star_empty.svg" alt="Star">
+                            {% endif %}
+                            {% if review.rating >= 5 %}
+                            <img src="/star_full.svg" alt="Star">
+                            {% else %}
+                            <img src="/star_empty.svg" alt="Star">
+                            {% endif %}
+                        </div>
+                        <div>{{ review.customer.firstName }} {{ review.customer.lastName }}</div>
                     </div>
                     <p>{{ review.comment }}</p>
                 </div>

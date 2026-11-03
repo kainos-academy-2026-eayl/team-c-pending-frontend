@@ -1,7 +1,7 @@
 import { Router, type Request, type Response } from "express";
 import cache from "../cache";
 import { z } from "zod";
-import Product from "../schemas/product.schema";
+import Product, { ProductWithReviews } from "../schemas/product.schema";
 
 const router = Router();
 
@@ -20,11 +20,15 @@ router.get("/", async (req: Request, res: Response) => {
 router.get("/:id", async (req: Request, res: Response) => {
     const id = req.params.id as string;
     const productData = await fetch(`${process.env.API_ADDRESS}/products/${encodeURIComponent(id)}`);
-    const product = Product.parse(await productData.json());
-    res.render("product.njk", { product });
+    const product = ProductWithReviews.parse(await productData.json());
+    const stars = Math.round(product.reviews.reduce((acc, review) => acc + review.rating, 0)/product.reviews.length);
+    res.render("product.njk", { product, stars });
 });
 
 router.get("/:id/add_review", async (req: Request, res: Response) => {
+    if (!res.locals.me) {
+        return res.redirect("/login");
+    }
     const id = req.params.id as string;
     const productData = await fetch(`${process.env.API_ADDRESS}/products/${encodeURIComponent(id)}`);
     const product = Product.parse(await productData.json());
@@ -32,6 +36,9 @@ router.get("/:id/add_review", async (req: Request, res: Response) => {
 });
 
 router.get("/:id/add_review_message", async (req: Request, res: Response) => {
+        if (!res.locals.me) {
+        return res.redirect("/login");
+    }
     const id = req.params.id as string;
     const productData = await fetch(`${process.env.API_ADDRESS}/products/${encodeURIComponent(id)}`);
     const product = Product.parse(await productData.json());
@@ -39,6 +46,9 @@ router.get("/:id/add_review_message", async (req: Request, res: Response) => {
 });
 
 router.post("/:id/add_review", async (req: Request, res: Response) => {
+        if (!res.locals.me) {
+        return res.redirect("/login");
+    }
     const input = z.object({
         rating: z.string().transform(Number),
         message: z.string().optional()
@@ -47,7 +57,8 @@ router.post("/:id/add_review", async (req: Request, res: Response) => {
     const response = await fetch(`${process.env.API_ADDRESS}/products/${encodeURIComponent(id)}/reviews`, {
         method: "POST",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${req.cookies.JWT_TOKEN}`
         },
         body: JSON.stringify(input)
     });
