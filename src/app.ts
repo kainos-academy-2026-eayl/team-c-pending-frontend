@@ -11,8 +11,14 @@ import loginController from "./controllers/login";
 import { logoutController } from "./controllers/logout";
 import { accountController } from "./controllers/account";
 import bodyParser from "body-parser";
-import "dotenv/config";
 import User from "./schemas/user.schema";
+import dotenv from "dotenv";
+
+if (process.env.ISTEST == "1") {
+	dotenv.config({ path: '.env.test', override: true });
+} else {
+	dotenv.config({ path: '.env' });
+}
 
 export function createApp(): Express {
 	const app = express();
