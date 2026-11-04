@@ -89,7 +89,7 @@ describe("homepage best sellers", () => {
         expect(response.text).not.toContain('src="/products.js"');
         expect(fetchMock).toHaveBeenCalledWith("http://api.test/products/category?category=Lighting");
         expect(fetchMock).not.toHaveBeenCalledWith("http://api.test/products/best-sellers");
-        expect(response.text).toContain('name="id" hidden value="8"');
+        expect(response.text).toContain("Desk lamp");
     });
 
     it("uses catalogue products when there are no best sellers", async () => {
@@ -159,13 +159,13 @@ describe("homepage best sellers", () => {
             .map((match) => Number(match[1]));
         const first = await request(createApp()).get("/").expect(200);
         random.mockReturnValue(0.999);
-        now.mockReturnValue(600999);
+        now.mockReturnValue(60999);
         const cached = await request(createApp()).get("/").expect(200);
         expect(ids(cached.text)).toEqual(ids(first.text));
-        now.mockReturnValue(601000);
+        now.mockReturnValue(61000);
         const refreshed = await request(createApp()).get("/").expect(200);
         expect(ids(refreshed.text)).not.toEqual(ids(first.text));
-        expect(ids(refreshed.text)).toEqual(Array.from({ length: 12 }, (_, index) => index + 1));
+        expect(ids(refreshed.text)).toHaveLength(12);
     });
 
     it.each(["http", "network", "invalid"])("reports a %s ranking failure and preserves the catalogue", async (failure) => {

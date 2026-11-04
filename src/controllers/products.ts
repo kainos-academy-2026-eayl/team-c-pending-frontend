@@ -4,12 +4,12 @@ import { z } from "zod";
 import Product from "../schemas/product.schema";
 
 export const productsController = async (req: Request, res: Response) => {
-    let productData: globalThis.Response;
+    let productData;
     if (req.query.category) {
         const category = req.query.category.toString();
-        productData = await fetch(`${process.env.API_ADDRESS}/products/category?category=${encodeURIComponent(category)}`);
+        productData = await cache(`products-category-${category}`, () => fetch(`${process.env.API_ADDRESS}/products/category?category=${encodeURIComponent(category)}`));
     } else {
-        productData = await fetch(`${process.env.API_ADDRESS}/products`);
+        productData = await cache(`products-all`, () => fetch(`${process.env.API_ADDRESS}/products`));
     }
     const products = z.array(Product).parse(productData);
     const isHome = req.path === "/" && !req.query.category;
