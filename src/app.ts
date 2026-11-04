@@ -12,8 +12,8 @@ import { logoutController } from "./controllers/logout";
 import { productsController } from "./controllers/products";
 import registerController from "./controllers/register";
 import "dotenv/config";
-import User from "./schemas/user.schema";
 import { passwordResetController } from "./controllers/passwordReset";
+import User from "./schemas/user.schema";
 
 export function createApp(): Express {
 	const app = express();
