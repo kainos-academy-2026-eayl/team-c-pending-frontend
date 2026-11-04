@@ -1,24 +1,20 @@
 import z from "zod";
 
-const Product = z.object({
-    productID: z.number().int().positive().optional(),
-    id: z.number().int().positive().optional(),
+export default z.object({
     name: z.string(),
+    productID: z.number().optional(),
+    id: z.number().optional(),
     price: z.number(),
     description: z.string(),
     category: z.string(),
-    quantity: z.number().int(),
+    quantity: z.int(),
     image: z.string().nullable(),
-}).refine(
+})
+.refine(
     (data) => data.productID !== undefined || data.id !== undefined,
-    { message: "Either productID or id must be provided" }
-).transform(({ productID, id, ...product }) => {
-    const finalId = productID ?? id;
-    if (!finalId) throw new Error("Either productID or id must be provided");
-    return {
-        ...product,
-        id: finalId,
-    };
-});
-
-export default Product;
+    "Must have either productID or id"
+)
+.transform(({ productID, id, ...product }) => ({
+    ...product,
+    id: productID ?? id,
+}));
