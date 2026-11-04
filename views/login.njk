@@ -7,15 +7,16 @@
     <p style="color: red;">{{ error }}</p>
     {% endif %}
     <label for="email">Email:</label><br>
-    <input type="email" id="email" name="email">
+    <input type="email" data-test-id="email" id="email" name="email">
     <br>
     <label for="password">Password:</label><br>
     <div class="password-field">
-        <input type="password" id="password" name="password">
+        <input type="password" data-test-id="password" id="password" name="password">
         <button class="main-button" type="button" id="toggle-password" aria-controls="password">Show</button>
     </div>
     <br>
-    <button class="main-button" type="submit">Login</button>
+    <p><a href="/password-reset">Forgot your password?</a></p>
+    <button class="main-button" data-test-id="login-button" type="submit">Login</button>
 </form>
 <script defer src="/showPassword.js"></script>
 {% endblock %}
