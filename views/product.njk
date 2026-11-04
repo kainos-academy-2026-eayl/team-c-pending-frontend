@@ -11,7 +11,7 @@
         </div>
         <div class="product-description">
             <h1>{{ product.name }}</h1>
-            <div class="stars">
+            <div class="stars" role="img" aria-label="{% if product.reviews.length %}Average rating: {{ stars }} out of 5 ({{ product.reviews.length }} reviews){% else %}No reviews yet{% endif %}">
                 {% if stars >= 1 %}
                 <img src="/star_full.svg" alt="Star">
                 {% else %}
