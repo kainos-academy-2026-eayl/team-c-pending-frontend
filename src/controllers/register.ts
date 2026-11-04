@@ -12,7 +12,34 @@ router.get("/", (req: Request, res: Response) => {
 });
 
 router.post("/", async (req: Request, res: Response) => {
-    const { email, password, "first-name": firstName, "last-name": lastName, "confirm-password": confirmPassword } = req.body;
+    const {
+        email,
+        password,
+        "first-name": firstName,
+        "last-name": lastName,
+        "confirm-password": confirmPassword,
+        passwordVisibility,
+    } = req.body;
+
+    if (
+        passwordVisibility === "show-password" ||
+        passwordVisibility === "hide-password" ||
+        passwordVisibility === "show-confirm-password" ||
+        passwordVisibility === "hide-confirm-password"
+    ) {
+        res.set("Cache-Control", "no-store");
+        return res.render("register.njk", {
+            email: typeof email === "string" ? email : "",
+            firstName: typeof firstName === "string" ? firstName : "",
+            lastName: typeof lastName === "string" ? lastName : "",
+            password: typeof password === "string" ? password : "",
+            confirmPassword: typeof confirmPassword === "string" ? confirmPassword : "",
+            visiblePasswordField: passwordVisibility.startsWith("show-")
+                ? passwordVisibility.slice("show-".length)
+                : null,
+        });
+    }
+
     if (password !== confirmPassword) {
         return res.redirect("/register?error=" + encodeURIComponent("Passwords do not match"));
     }
