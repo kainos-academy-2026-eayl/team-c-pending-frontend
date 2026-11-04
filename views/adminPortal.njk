@@ -1,12 +1,14 @@
 {% extends "layout.njk" %}
-{% block title %}Admin Portal - {% if section == "customers" %}Customers{% else %}Products{% endif %}{% endblock %}
+{% block title %}Admin Portal - {% if section == "customers" %}Customers{% elif section == "orders" %}Orders{% elif section == "add-products" %}Add products{% else %}Products{% endif %}{% endblock %}
 {% block head %}<link rel="stylesheet" href="/admin.css">{% endblock %}
 {% block content %}
 <main class="admin-portal">
-    <h2>Admin portal</h2>
+    <h2>ADMIN PORTAL</h2>
     <nav class="admin-navigation" aria-label="Admin sections">
         <a href="/admin/customers"{% if section == "customers" %} aria-current="page"{% endif %}>Edit customers</a>
         <a href="/admin/products"{% if section == "products" %} aria-current="page"{% endif %}>Edit products</a>
+        <a href="/admin/products/new"{% if section == "add-products" %} aria-current="page"{% endif %}>Add products</a>
+        <a href="/admin/orders"{% if section == "orders" %} aria-current="page"{% endif %}>View orders</a>
     </nav>
     {% if error %}<p role="alert">{{ error }}</p>{% endif %}
     {% if success %}<p role="status">{{ success }}</p>{% endif %}
@@ -46,6 +48,88 @@
         {% endfor %}
     </section>
 
+    {% elif section == "add-products" %}
+        <section aria-labelledby="add-products-heading">
+            <h2 id="add-products-heading">Add products</h2>
+            <form class="admin-edit-form" action="/admin/products/new" method="post">
+                <fieldset>
+                    <legend>New product</legend>
+                    <label for="new-product-name">Name</label>
+                    <input id="new-product-name" name="name" value="{{ values.name }}" required>
+                    <label for="new-product-price">Price (£)</label>
+                    <input id="new-product-price" name="price" type="number" min="0" step="0.01"
+                        value="{{ values.price }}" required>
+                    <label for="new-product-category">Category</label>
+                    <input id="new-product-category" name="category" value="{{ values.category }}" required>
+                    <label for="new-product-description">Description</label>
+                    <textarea id="new-product-description" name="description" required>{{ values.description }}</textarea>
+                    <label for="new-product-quantity">Quantity</label>
+                    <input id="new-product-quantity" name="quantity" type="number" min="0" step="1"
+                        value="{{ values.quantity }}" required>
+                    <label for="new-product-image">Image URL (optional)</label>
+                    <input id="new-product-image" name="image" type="url" value="{{ values.image }}">
+                    <p>New products are immediately available for browsing.</p>
+                    <button class="main-button" type="submit">Add product</button>
+                </fieldset>
+            </form>
+        </section>
+        {% elif section == "orders" %}
+        <section aria-labelledby="orders-heading">
+            <h2 id="orders-heading">All customer orders</h2>
+            <form class="admin-filters" action="/admin/orders" method="get">
+                <label for="order-search">Customer name</label>
+                <input id="order-search" type="search" name="search" value="{{ search }}"
+                    placeholder="Customer name">
+                <label for="order-status">Order status</label>
+                <select id="order-status" name="status">
+                    <option value="">All statuses</option>
+                    {% for option in statuses %}
+                    <option value="{{ option }}"{% if status == option %} selected{% endif %}>{{ option }}</option>
+                    {% endfor %}
+                </select>
+                <label for="order-sort">Order date</label>
+                <select id="order-sort" name="sort">
+                    <option value="newest"{% if sort == "newest" %} selected{% endif %}>Newest first</option>
+                    <option value="oldest"{% if sort == "oldest" %} selected{% endif %}>Oldest first</option>
+                </select>
+                <button class="main-button" type="submit">Apply filters</button>
+                <a href="/admin/orders">Clear filters</a>
+            </form>
+            <p role="status">{{ orders | length }} order(s) found.</p>
+            {% for order in orders %}
+            <article class="admin-order">
+                <h3>Order ID: {{ order.orderID }}</h3>
+                <p>Customer: {{ order.customer.firstName }} {{ order.customer.lastName }}</p>
+                <p>Customer ID: {{ order.customerID }}</p>
+                <p>Date (UTC): <time datetime="{{ order.date }}">{{ order.formattedDate }}</time></p>
+                <p>Status: {{ order.status }} · Type: {{ order.type }}</p>
+                <div class="admin-order-items">
+                    <table>
+                        <thead>
+                            <tr><th scope="col">Product</th><th scope="col">Product ID</th><th scope="col">Quantity</th><th scope="col">Unit price</th><th scope="col">Subtotal</th><th scope="col">Status</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order.orderItems %}
+                            <tr>
+                                <td>{{ item.product.name }}</td>
+                                <td>{{ item.productID }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td>£{{ item.unitPrice | pounds }}</td>
+                                <td>£{{ (item.unitPrice * item.quantity) | pounds }}</td>
+                                <td>{{ item.itemStatus }}</td>
+                            </tr>
+                            {% else %}
+                            <tr><td colspan="6">No items in this order.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <p><strong>Total: £{{ order.total | pounds }}</strong></p>
+            </article>
+            {% else %}
+            <p>No orders found.</p>
+            {% endfor %}
+        </section>
     {% else %}
     <section aria-labelledby="products-heading">
         <h2 id="products-heading">Products</h2>
@@ -69,17 +153,28 @@
             <fieldset>
                 <legend>ProductID: {{ product.productID }}</legend>
                 <form action="/admin/products/{{ product.productID }}?{{ filterQuery }}" method="post">
-                    <label for="product-name-{{ product.productID }}">Name</label>
-                    <input id="product-name-{{ product.productID }}" name="name" value="{{ product.name }}" required>
-                    <label for="product-price-{{ product.productID }}">Price (£)</label>
-                    <input id="product-price-{{ product.productID }}" name="price" type="number" min="0" step="0.01"
-                        value="{{ product.price }}" required>
+                    <div class="product-primary-fields">
+                        <div class="product-basic-fields">
+                            <div>
+                                <label for="product-name-{{ product.productID }}">Name</label>
+                                <input id="product-name-{{ product.productID }}" name="name" value="{{ product.name }}" required>
+                            </div>
+                            <div>
+                                <label for="product-price-{{ product.productID }}">Price (£)</label>
+                                <input id="product-price-{{ product.productID }}" name="price" type="number" min="0" step="0.01"
+                                    value="{{ product.price }}" required>
+                            </div>
+                            <div>
+                                <label for="product-category-{{ product.productID }}">Category</label>
+                                <input id="product-category-{{ product.productID }}" name="category" value="{{ product.category }}"
+                                    required>
+                            </div>
+                        </div>
+                        <img class="product-image-preview" src="{{ product.image }}" alt="{{ product.name }}">
+                    </div>
                     <label for="product-description-{{ product.productID }}">Description</label>
                     <textarea id="product-description-{{ product.productID }}" name="description"
                         required>{{ product.description }}</textarea>
-                    <label for="product-category-{{ product.productID }}">Category</label>
-                    <input id="product-category-{{ product.productID }}" name="category" value="{{ product.category }}"
-                        required>
                     <label for="product-quantity-{{ product.productID }}">Quantity</label>
                     <input id="product-quantity-{{ product.productID }}" name="quantity" type="number" min="0" step="1"
                         value="{{ product.quantity }}" required>

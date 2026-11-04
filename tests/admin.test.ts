@@ -42,12 +42,194 @@ afterEach(() => {
 });
 
 describe("Admin sections", () => {
+	it("shows the add product form and all admin navigation links", async () => {
+		const response = await request(createApp()).get("/admin/products/new")
+			.set("Cookie", "JWT_TOKEN=test-token").expect(200);
+		for (const path of ["/admin/customers", "/admin/products", "/admin/products/new", "/admin/orders"]) {
+			expect(response.text).toContain(`href="${path}"`);
+		}
+		expect(response.text).toContain('action="/admin/products/new"');
+		expect(response.text).toContain("New product");
+		expect(apiFetch).toHaveBeenCalledTimes(1);
+	});
+
+	it("creates a visible product using numeric fields and a nullable image", async () => {
+		apiFetch.mockResolvedValueOnce(Response.json(user)).mockResolvedValueOnce(Response.json("All okay"));
+		const response = await request(createApp()).post("/admin/products/new")
+			.set("Host", "localhost").set("Origin", "http://localhost")
+			.set("Cookie", "JWT_TOKEN=test-token").type("form")
+			.send({ name: " Apple ", price: "0.5", category: "Fruit", description: "An apple", quantity: "9", image: "" })
+			.expect(302);
+		expect(response.headers.location).toContain("/admin/products/new?success=");
+		expect(apiFetch).toHaveBeenLastCalledWith("http://api.example/products", {
+			method: "POST",
+			headers: { Authorization: "Bearer test-token", "Content-Type": "application/json" },
+			body: JSON.stringify({ name: "Apple", price: 0.5, description: "An apple", category: "Fruit", quantity: 9, image: null }),
+		});
+	});
+
+	it.each([{ price: "" }, { quantity: "" }, { price: "-1" }, { quantity: "1.5" }, { name: "" }])(
+		"rejects invalid new product data and retains fields: %j", async (invalid) => {
+			const response = await request(createApp()).post("/admin/products/new")
+				.set("Host", "localhost").set("Origin", "http://localhost")
+				.set("Cookie", "JWT_TOKEN=test-token").type("form")
+				.send({ name: "Apple", price: "0.5", category: "Fruit", description: "An apple", quantity: "9", image: "", ...invalid })
+				.expect(400);
+			expect(response.text).toContain('role="alert"');
+			expect(response.text).toContain('value="Fruit"');
+			expect(response.text).toContain("An apple");
+			expect(apiFetch).toHaveBeenCalledTimes(1);
+		},
+	);
+
+	it("shows product creation API errors without losing entered fields", async () => {
+		apiFetch.mockResolvedValueOnce(Response.json(user))
+			.mockResolvedValueOnce(Response.json({ error: "Unavailable" }, { status: 503 }));
+		const response = await request(createApp()).post("/admin/products/new")
+			.set("Host", "localhost").set("Origin", "http://localhost")
+			.set("Cookie", "JWT_TOKEN=test-token").type("form")
+			.send({ name: "Apple", price: "0.5", category: "Fruit", description: "An apple", quantity: "9", image: "" })
+			.expect(503);
+		expect(response.text).toContain("Could not add product (503)");
+		expect(response.text).toContain('value="Apple"');
+	});
+
+	it("shows all customer orders with names, snapshot totals, UTC dates and newest dates first", async () => {
+		const order = {
+			orderID: 1, customerID: 42, date: "2026-11-04T10:00:00.000Z", status: "pending", type: "delivery",
+			customer: { firstName: "Ada", lastName: "Lovelace" },
+			orderItems: [{ productID: 7, quantity: 3, orderItemID: 10, itemStatus: "active", unitPrice: 1.25, product: { name: "Apple" } }],
+		};
+		apiFetch.mockResolvedValueOnce(Response.json(user))
+			.mockResolvedValueOnce(Response.json([order, { ...order, orderID: 2, customerID: 99, date: "2026-11-03T10:00:00.000Z" }]));
+		const response = await request(createApp()).get("/admin/orders")
+			.set("Cookie", "JWT_TOKEN=test-token").expect(200);
+		expect(response.text).toContain("Customer ID: 42");
+		expect(response.text).toContain("Customer ID: 99");
+		expect(response.text).toContain("Customer: Ada Lovelace");
+		expect(response.text).toContain("Apple");
+		expect(response.text).toContain("Total: £3.75");
+		expect(response.text).toContain("04/11/2026, 10:00:00");
+		expect(response.text.indexOf("Order ID: 1")).toBeLessThan(response.text.indexOf("Order ID: 2"));
+		expect(response.text).not.toContain('method="post"');
+		expect(apiFetch).toHaveBeenLastCalledWith("http://api.example/orders/admin", {
+			headers: { Authorization: "Bearer test-token" },
+		});
+	});
+
+	it.each([
+		["?search=  lOvE  ", [1, 3]],
+		["?search=ada%20lovelace", [1, 3]],
+		["?search=grace", [2]],
+		["?status=pending", [1, 2]],
+		["?search=ada&status=completed", [3]],
+		["?sort=oldest", [2, 3, 1]],
+		["?sort=newest", [1, 3, 2]],
+		["?search=nobody", []],
+		["?status=unknown", []],
+	])("filters and sorts orders with %s", async (query, expectedIDs) => {
+		const order = {
+			customerID: 42, type: "delivery", orderItems: [],
+			customer: { firstName: "Ada", lastName: "Lovelace" },
+		};
+		apiFetch.mockResolvedValueOnce(Response.json(user))
+			.mockResolvedValueOnce(Response.json([
+				{ ...order, orderID: 3, date: "2026-11-03T10:00:00.000Z", status: "completed" },
+				{ ...order, orderID: 2, date: "2026-11-02T10:00:00.000Z", status: "pending",
+					customer: { firstName: "Grace", lastName: "Hopper" } },
+				{ ...order, orderID: 1, date: "2026-11-04T10:00:00.000Z", status: "pending" },
+			]));
+		const response = await request(createApp()).get(`/admin/orders${query}`)
+			.set("Cookie", "JWT_TOKEN=test-token").expect(200);
+		const actualIDs = [...response.text.matchAll(/<h3>Order ID: (\d+)<\/h3>/g)]
+			.map((match) => Number(match[1]));
+		expect(actualIDs).toEqual(expectedIDs);
+		expect(response.text).toContain(`${expectedIDs.length} order(s) found.`);
+		expect(response.text).toContain('value="completed"');
+		expect(response.text).toContain('value="pending"');
+		if (!expectedIDs.length) expect(response.text).toContain("No orders found.");
+	});
+
+	it("keeps the selected filters and provides a clear link", async () => {
+		apiFetch.mockResolvedValueOnce(Response.json(user))
+			.mockResolvedValueOnce(Response.json([{
+				orderID: 1, customerID: 42, type: "delivery", orderItems: [],
+				customer: { firstName: "Ada", lastName: "Lovelace" },
+				date: "2026-11-04T10:00:00.000Z", status: "pending",
+			}]));
+		const response = await request(createApp()).get("/admin/orders?search=Ada&status=pending&sort=oldest")
+			.set("Cookie", "JWT_TOKEN=test-token").expect(200);
+		expect(response.text).toContain('value="Ada"');
+		expect(response.text).toContain('value="pending" selected');
+		expect(response.text).toContain('value="oldest" selected');
+		expect(response.text).toContain('href="/admin/orders">Clear filters</a>');
+	});
+
+	it.each(["sort=invalid", "search=a&search=b", "status=a&status=b", "sort=newest&sort=oldest"])(
+		"rejects invalid order filters: %s", async (query) => {
+			const response = await request(createApp()).get(`/admin/orders?${query}`)
+				.set("Cookie", "JWT_TOKEN=test-token").expect(400);
+			expect(response.text).toContain("Invalid order filters");
+			expect(apiFetch).toHaveBeenCalledTimes(1);
+		},
+	);
+
+	it("shows an empty orders state", async () => {
+		apiFetch.mockResolvedValueOnce(Response.json(user)).mockResolvedValueOnce(Response.json([]));
+		const response = await request(createApp()).get("/admin/orders")
+			.set("Cookie", "JWT_TOKEN=test-token").expect(200);
+		expect(response.text).toContain("No orders found.");
+	});
+
+	it("reports order API failures", async () => {
+		apiFetch.mockResolvedValueOnce(Response.json(user))
+			.mockResolvedValueOnce(Response.json({ error: "Unavailable" }, { status: 503 }));
+		const response = await request(createApp()).get("/admin/orders")
+			.set("Cookie", "JWT_TOKEN=test-token").expect(503);
+		expect(response.text).toContain("Unable to load orders (503)");
+	});
+
+	it.each(["/admin/products/new", "/admin/orders"])("protects the new section %s", async (path) => {
+		await request(createApp()).get(path).expect(302).expect("Location", "/login");
+		apiFetch.mockResolvedValueOnce(Response.json({ ...user, role: "customer" }));
+		await request(createApp()).get(path).set("Cookie", "JWT_TOKEN=test-token")
+			.expect(302).expect("Location", "/");
+	});
+
+	it("protects product creation from non-admins and cross-origin requests", async () => {
+		await request(createApp()).post("/admin/products/new")
+			.set("Host", "localhost").set("Origin", "http://localhost").type("form")
+			.send({}).expect(302).expect("Location", "/login");
+		apiFetch.mockResolvedValueOnce(Response.json({ ...user, role: "customer" }));
+		await request(createApp()).post("/admin/products/new")
+			.set("Host", "localhost").set("Origin", "http://localhost")
+			.set("Cookie", "JWT_TOKEN=test-token").type("form").send({})
+			.expect(302).expect("Location", "/");
+		await request(createApp()).post("/admin/products/new")
+			.set("Host", "localhost").set("Origin", "http://other.example")
+			.set("Cookie", "JWT_TOKEN=test-token").type("form").send({}).expect(403);
+	});
+
 	it.each(["customers"])("shows delete controls beside save on the %s page", async (section) => {
 		const response = await request(createApp()).get(`/admin/${section}`)
 			.set("Cookie", "JWT_TOKEN=test-token").expect(200);
 		expect(response.text).toContain('class="admin-actions"');
 		expect(response.text).toContain('class="admin-delete-button"');
 		expect(response.text).toContain(`/admin/${section}/1/delete?`);
+	});
+
+	it("orders customers by numeric ID", async () => {
+		apiFetch.mockResolvedValueOnce(Response.json(user))
+			.mockResolvedValueOnce(Response.json([
+				{ customerID: 10, firstName: "Ada", lastName: "Lovelace", email: "ada@example.com", role: "customer" },
+				{ customerID: 2, firstName: "Grace", lastName: "Hopper", email: "grace@navy.example", role: "customer" },
+			]));
+
+		const response = await request(createApp()).get("/admin/customers")
+			.set("Cookie", "JWT_TOKEN=test-token").expect(200);
+
+		expect(response.text.indexOf("CustomerID: 2"))
+			.toBeLessThan(response.text.indexOf("CustomerID: 10"));
 	});
 
 	it.each(["customers"])("confirms deletion of %s without modifying data", async (section) => {

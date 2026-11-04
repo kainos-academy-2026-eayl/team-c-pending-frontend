@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import { Router } from "express";
 import { z } from "zod";
 import Product from "../schemas/product.schema";
+import Order from "../schemas/order.schema";
 
 const router = Router();
 
@@ -26,6 +27,24 @@ const ProductChanges = z.object({
     category: z.string().trim().min(1),
     quantity: z.coerce.number().int().nonnegative(),
     image: z.string().transform((image) => image.trim() || null),
+});
+
+const AdminOrder = Order.extend({
+    customer: z.object({
+        firstName: z.string(),
+        lastName: z.string(),
+    }),
+    orderItems: z.array(Order.shape.orderItems.element.extend({
+        unitPrice: z.number().finite().nonnegative(),
+        product: z.object({ name: z.string() }),
+    })),
+    date: z.iso.datetime(),
+});
+
+const OrderFilters = z.object({
+    search: z.string().trim().default(""),
+    status: z.string().default(""),
+    sort: z.enum(["newest", "oldest"]).default("newest"),
 });
 
 const RouteID = z.string().regex(/^[1-9]\d*$/);
@@ -71,6 +90,86 @@ function requireAdmin(req: Request, res: Response): string | null {
 router.get("/", (req: Request, res: Response) => {
     if (!requireAdmin(req, res)) return;
     return res.redirect("/admin/customers");
+});
+
+router.get("/products/new", (req: Request, res: Response) => {
+    if (!requireAdmin(req, res)) return;
+    return res.render("adminPortal.njk", {
+        section: "add-products",
+        values: {},
+        success: typeof req.query.success === "string" ? req.query.success : undefined,
+    });
+});
+
+router.post("/products/new", async (req: Request, res: Response) => {
+    const token = requireAdmin(req, res);
+    if (!token) return;
+    const values = z.object({
+        name: z.string().default(""),
+        price: z.string().default(""),
+        category: z.string().default(""),
+        description: z.string().default(""),
+        quantity: z.string().default(""),
+        image: z.string().default(""),
+    }).parse(req.body);
+    const result = ProductChanges.extend({
+        price: z.string().trim().min(1, "Price is required").transform(Number).pipe(z.number().finite().nonnegative()),
+        quantity: z.string().trim().min(1, "Quantity is required").transform(Number).pipe(z.number().int().nonnegative()),
+    }).safeParse(values);
+    if (!result.success) {
+        return res.status(400).render("adminPortal.njk", {
+            section: "add-products", values, error: result.error.issues[0]!.message,
+        });
+    }
+
+    const response = await fetch(`${process.env.API_ADDRESS}/products`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify(result.data),
+    });
+    if (!response.ok) {
+        return res.status(response.status).render("adminPortal.njk", {
+            section: "add-products", values, error: `Could not add product (${response.status})`,
+        });
+    }
+    return res.redirect("/admin/products/new?success=Product+added+and+available+for+browsing");
+});
+
+router.get("/orders", async (req: Request, res: Response) => {
+    const token = requireAdmin(req, res);
+    if (!token) return;
+    const query = OrderFilters.safeParse(req.query);
+    if (!query.success) {
+        return res.status(400).send("Invalid order filters");
+    }
+    const { search, status, sort } = query.data;
+    const response = await fetch(`${process.env.API_ADDRESS}/orders/admin`, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!response.ok) {
+        return res.status(response.status).send(`Unable to load orders (${response.status})`);
+    }
+    const allOrders = z.array(AdminOrder).parse(await response.json());
+    const statuses = [...new Set(allOrders.map((order) => order.status))]
+        .sort((a, b) => a.localeCompare(b));
+    const nameQuery = search.toLowerCase();
+    const orders = allOrders
+        .filter((order) =>
+            `${order.customer.firstName} ${order.customer.lastName}`.toLowerCase().includes(nameQuery)
+            && (!status || order.status === status),
+        )
+        .sort((a, b) => {
+            const difference = Date.parse(a.date) - Date.parse(b.date) || a.orderID - b.orderID;
+            return sort === "oldest" ? difference : -difference;
+        })
+        .map((order) => ({
+            ...order,
+            formattedDate: new Date(order.date).toLocaleString("en-GB", { timeZone: "UTC" }),
+            total: order.orderItems.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0),
+        }));
+    return res.render("adminPortal.njk", {
+        section: "orders", orders, statuses, search, status, sort,
+    });
 });
 
 router.get("/:section/:id/delete", (req: Request, res: Response) => {
@@ -125,7 +224,7 @@ router.get(["/customers", "/products"], async (req: Request, res: Response) => {
         ? z.array(Customer).parse(await response.json()).filter((customer) =>
             `${customer.firstName} ${customer.lastName}`.toLowerCase().includes(query)
             || customer.email.toLowerCase().includes(query),
-        )
+        ).sort((a, b) => a.customerID - b.customerID)
         : [];
     const allProducts = section === "products"
         ? z.array(Product.extend({ hide: z.boolean() })).parse(await response.json())
@@ -135,7 +234,7 @@ router.get(["/customers", "/products"], async (req: Request, res: Response) => {
     const products = allProducts.filter((product) =>
         product.name.toLowerCase().includes(query)
         && (!category || product.category === category),
-    );
+    ).sort((a, b) => a.productID - b.productID);
     const filterQuery = new URLSearchParams({ search, category }).toString();
     const error = typeof req.query.error === "string" ? req.query.error : undefined;
     const success = typeof req.query.success === "string" ? req.query.success : undefined;
