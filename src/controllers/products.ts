@@ -49,12 +49,17 @@ export const productController = async (req: Request, res: Response) => {
     if (!result.success) {
         return res.status(400).send("Invalid product ID");
     }
-    const response = await fetch(`${process.env.API_ADDRESS}/products/${result.data}`);
-    if (response.status === 404) {
-        return res.status(404).render("product.njk", { product: null });
+    try {
+        const response = await fetch(`${process.env.API_ADDRESS}/products/${result.data}`);
+        if (response.status === 404) {
+            return res.status(404).render("product.njk", { product: null });
+        }
+        if (!response.ok) {
+            return res.status(500).render("product.njk", { product: null });
+        }
+        return res.render("product.njk", { product: Product.parse(await response.json()) });
+    } catch (error) {
+        console.error("Failed to load product", error);
+        return res.status(500).render("product.njk", { product: null });
     }
-    if (!response.ok) {
-        throw new Error(`Failed to fetch product ${result.data}: HTTP ${response.status}`);
-    }
-    return res.render("product.njk", { product: Product.parse(await response.json()) });
 };

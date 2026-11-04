@@ -81,6 +81,9 @@ export function createApp(): Express {
 		return num.toFixed(length || 2);
 	});
 
+	const asyncHandler = (fn: (req: express.Request, res: express.Response) => Promise<any>) => 
+		(req: express.Request, res: express.Response, next: express.NextFunction) => Promise.resolve(fn(req, res)).catch(next);
+
 	app.get("/health", healthController);
 
 	app.use("/login", loginController);
@@ -89,9 +92,9 @@ export function createApp(): Express {
 
 	app.use("/checkout", checkoutController);
 
-	app.get("/", productsController);
-	app.get("/products", productsController);
-	app.get("/products/:id", productController);
+	app.get("/", asyncHandler(productsController));
+	app.get("/products", asyncHandler(productsController));
+	app.get("/products/:id", asyncHandler(productController));
 
 	app.get("/confirmation", confirmationController);
 	app.use("/basket", basketController);
@@ -99,6 +102,11 @@ export function createApp(): Express {
 	app.use(express.static("public"));
 	app.get("/account", accountController);
 	app.post("/logout", logoutController);
+
+	app.use((err: Error, _req: express.Request, res: express.Response) => {
+		console.error("Unhandled error:", err);
+		res.status(500).render("error.njk", { error: err.message });
+	});
 
 	return app;
 
