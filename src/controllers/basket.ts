@@ -6,9 +6,17 @@ const router = Router();
 
 router.get("/", async (req, res) => {
 
+    if (!res.locals.me) {
+        return res.redirect("/login");
+    }
+
     const basket = Basket.parse(await fetch(`${process.env.API_ADDRESS}/basket`, { headers: { "Authorization": `Bearer ${req.cookies.JWT_TOKEN}` } }).then(res => res.json()));
 
-    res.render("basket.njk", { items: basket, total: basket.reduce((sum, item) => sum + item.product.price * item.quantity, 0) });
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+
+    res.render("basket.njk", { items: basket.sort((a, b) => a.product.name.localeCompare(b.product.name)), total: basket.reduce((sum, item) => sum + item.product.price * item.quantity, 0), error: req.query.error });
 });
 
 router.post("/", async (req, res) => {
@@ -17,8 +25,8 @@ router.post("/", async (req, res) => {
         return res.redirect("/login");
     }
 
-    const { id, quantityMode, quantity } = z.object({
-        id: z.string().transform(Number),
+    const { productID, quantityMode, quantity } = z.object({
+        productID: z.string().transform(Number),
         quantityMode: z.enum(["relative", "absolute"]),
         quantity: z.string().transform(Number)
     }).parse(req.body);
@@ -27,13 +35,15 @@ router.post("/", async (req, res) => {
     if (quantityMode === "relative") {
         const r = await fetch(`${process.env.API_ADDRESS}/basket`, { headers: { "Authorization": `Bearer ${req.cookies.JWT_TOKEN}` } }).then(res => res.json());
         const basket = Basket.parse(r);
-        const oldQuantity = basket.find(item => item.productId === id)?.quantity || 0;
+        const oldQuantity = basket.find(item => item.productID === productID)?.quantity || 0;
         newQuantity = oldQuantity + quantity;
     } else {
         newQuantity = quantity;
     }
 
-    const apiRes = await fetch(`${process.env.API_ADDRESS}/basket/${id}`, {
+    console.log(`Updating product ${productID} to quantity ${newQuantity}`);
+
+    const apiRes = await fetch(`${process.env.API_ADDRESS}/basket/${productID}`, {
         method: "POST",
         headers: { "Authorization": `Bearer ${req.cookies.JWT_TOKEN}`, "Content-Type": "application/json" },
         body: JSON.stringify({

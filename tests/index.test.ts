@@ -9,3 +9,12 @@ describe("GET /health", () => {
 		expect(response.body).toHaveProperty("status", "ok");
 	});
 });
+
+describe("CSRF protection", () => {
+	it("rejects state-changing requests without a same-origin Origin header", async () => {
+		await request(createApp())
+			.post("/logout")
+			.set("Origin", "https://attacker.example")
+			.expect(403);
+	});
+});

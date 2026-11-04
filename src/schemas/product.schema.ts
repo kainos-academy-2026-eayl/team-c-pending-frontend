@@ -2,7 +2,7 @@ import z from "zod";
 
 export default z.object({
     name: z.string(),
-    id: z.number(),
+    productID: z.number(),
     price: z.number(),
     description: z.string(),
     category: z.string(),

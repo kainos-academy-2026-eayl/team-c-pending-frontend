@@ -196,3 +196,9 @@ main {
     width: 40px;
     height: 40px;
 }
+
+.disabled-button {
+    background-color: darkred;
+    cursor: not-allowed;
+    pointer-events: none;
+}
