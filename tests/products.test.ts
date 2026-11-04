@@ -204,7 +204,9 @@ describe("product details", () => {
         expect(response.text).toContain("Adjustable task light");
         expect(response.text).toContain("£24.50");
         expect(response.text).toContain('action="/basket"');
-        expect(response.text).toContain('name="id" value="8"');
+        expect(response.text).toContain('name="productID" hidden value="8"');
+        expect(response.text).toContain('href="/products/8/add_review?rating=1"');
+        expect(response.text).toContain('aria-label="No reviews yet"');
         expect(fetchMock).toHaveBeenCalledExactlyOnceWith("http://api.test/products/8");
     });
 
@@ -227,7 +229,26 @@ describe("product details", () => {
         fetchMock.mockResolvedValue(Response.json({ ...product, quantity: 0 }));
         const response = await request(createApp()).get("/products/8").expect(200);
         expect(response.text).toContain("Out of stock");
-        expect(response.text).not.toContain('action="/basket"');
+        expect(response.text).toMatch(/<button[^>]*disabled[^>]*>Out of stock<\/button>/);
+    });
+
+    it("renders reviews and their average rating", async () => {
+        fetchMock.mockResolvedValue(Response.json({
+            ...product,
+            reviews: [
+                { rating: 5, comment: "Excellent", customer: { customerID: 1, firstName: "Test", lastName: "Customer" } },
+                { rating: 3, customer: { customerID: 2, firstName: "Another", lastName: "Customer" } },
+            ],
+        }));
+        const response = await request(createApp()).get("/products/8").expect(200);
+        expect(response.text).toContain("Average rating: 4 out of 5 (2 reviews)");
+        expect(response.text).toContain("Excellent");
+        expect(response.text).toContain("Test Customer");
+    });
+
+    it.each(["add_review", "add_review_message"])("requires login for %s", async (route) => {
+        await request(createApp()).get(`/products/8/${route}`).expect(302).expect("Location", "/login");
+        expect(fetchMock).not.toHaveBeenCalled();
     });
 });
 
