@@ -4,6 +4,7 @@ import z from "zod";
 
 export const accountController = async (req: Request, res: Response) => {
     const jwt = req.cookies.JWT_TOKEN as string | undefined;
+
     if (jwt) {
         const user = res.locals.me;
 
@@ -12,7 +13,13 @@ export const accountController = async (req: Request, res: Response) => {
         const orders = z.array(Order).parse(await response.json());
 
         res.render("accountMenu.njk",
-            { orders, firstName: user.firstName, lastName: user.lastName, email: user.email, customerId: user.customerId }
+            {
+                orders: orders.map(order => ({ ...order, price: order.orderItems.reduce((total, item) => total + item.product.price * item.quantity, 0) })),
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                customerId: user.customerId
+            }
         );
     } else {
         res.redirect("/login");

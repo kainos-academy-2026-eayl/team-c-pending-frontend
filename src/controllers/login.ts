@@ -13,7 +13,17 @@ router.get("/", (req: Request, res: Response) => {
 });
 
 router.post("/", async (req: Request, res: Response) => {
-    const { email, password } = req.body;
+    const { email, password, passwordVisibility } = req.body;
+
+    if (passwordVisibility === "show" || passwordVisibility === "hide") {
+        res.set("Cache-Control", "no-store");
+        return res.render("login.njk", {
+            email: typeof email === "string" ? email : "",
+            password: typeof password === "string" ? password : "",
+            passwordVisible: passwordVisibility === "show",
+        });
+    }
+
     const response = await fetch(`${process.env.API_ADDRESS}/login`, {
         method: "POST",
         headers: {
