@@ -3,7 +3,7 @@ import nunjucks from "nunjucks";
 import { healthController } from "./controllers/health";
 import basketController from "./controllers/basket";
 import registerController from "./controllers/register";
-import { productsController } from "./controllers/products";
+import productsController from "./controllers/products";
 import { confirmationController } from "./controllers/confirmation";
 import cookieParser from "cookie-parser";
 import checkoutController from "./controllers/checkout";
@@ -13,6 +13,7 @@ import { accountController } from "./controllers/account";
 import bodyParser from "body-parser";
 import "dotenv/config";
 import User from "./schemas/user.schema";
+import { passwordResetController } from "./controllers/passwordReset";
 
 export function createApp(): Express {
 	const app = express();
@@ -84,11 +85,14 @@ export function createApp(): Express {
 
 	app.use("/login", loginController);
 	app.use("/register", registerController);
+	app.get("/password-reset", passwordResetController);
 
 	app.use("/checkout", checkoutController);
 
-	app.get("/", productsController);
-	app.get("/products", productsController);
+	app.get("/", (_, res) => {
+		res.redirect("/products");
+	});
+	app.use("/products", productsController);
 
 	app.get("/confirmation", confirmationController);
 	app.use("/basket", basketController);
