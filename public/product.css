@@ -1,0 +1,69 @@
+.horizontal {
+    display: flex;
+    flex-flow: wrap;
+    gap: 20px;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.product-image {
+    box-sizing: border-box;
+    width: auto;
+    max-width: 70vw;
+    min-width: 30vw;
+    border-radius: 10px;
+}
+
+.product-description {
+    min-width: 40vw;
+}
+
+.margin-auto {
+    margin: 0 auto;
+}
+
+.disabled-button {
+    background-color: darkred;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.add-to-basket-form {
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.334);
+
+    border-radius: 5px;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+}
+
+.back-icon {
+    width: 1em;
+    margin-right: 5px;
+}
+
+.review-form {
+    background: rgba(255, 255, 255, 0.334);
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-flow: row wrap;
+    justify-content: space-between;
+}
+
+.stars {
+    white-space: nowrap;
+}
+
+.review {
+    background: rgba(255, 255, 255, 0.334);
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+    margin-bottom: 10px;
+}
