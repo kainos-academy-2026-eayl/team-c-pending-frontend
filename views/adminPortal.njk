@@ -27,7 +27,7 @@
         {% for customer in customers %}
         <form class="admin-edit-form" action="/admin/customers/{{ customer.customerID }}?{{ filterQuery }}" method="post">
             <fieldset>
-                <legend>CustomerID: {{ customer.customerID }} ({{ customer.role }})</legend>
+                <legend>({{ customer.role }})</legend>
                 <label for="customer-first-{{ customer.customerID }}">First name</label>
                 <input id="customer-first-{{ customer.customerID }}" name="firstName"
                     value="{{ customer.firstName }}" required>
@@ -98,21 +98,18 @@
             <p role="status">{{ orders | length }} order(s) found.</p>
             {% for order in orders %}
             <article class="admin-order">
-                <h3>Order ID: {{ order.orderID }}</h3>
                 <p>Customer: {{ order.customer.firstName }} {{ order.customer.lastName }}</p>
-                <p>Customer ID: {{ order.customerID }}</p>
                 <p>Date (UTC): <time datetime="{{ order.date }}">{{ order.formattedDate }}</time></p>
                 <p>Status: {{ order.status }} · Type: {{ order.type }}</p>
                 <div class="admin-order-items">
                     <table>
                         <thead>
-                            <tr><th scope="col">Product</th><th scope="col">Product ID</th><th scope="col">Quantity</th><th scope="col">Unit price</th><th scope="col">Subtotal</th><th scope="col">Status</th></tr>
+                            <tr><th scope="col">Product</th><th scope="col">Quantity</th><th scope="col">Unit price</th><th scope="col">Subtotal</th><th scope="col">Status</th></tr>
                         </thead>
                         <tbody>
                             {% for item in order.orderItems %}
                             <tr>
                                 <td>{{ item.product.name }}</td>
-                                <td>{{ item.productID }}</td>
                                 <td>{{ item.quantity }}</td>
                                 <td>£{{ item.unitPrice | pounds }}</td>
                                 <td>£{{ (item.unitPrice * item.quantity) | pounds }}</td>
@@ -151,7 +148,6 @@
         {% for product in products %}
         <div class="admin-edit-form">
             <fieldset>
-                <legend>ProductID: {{ product.productID }}</legend>
                 <form action="/admin/products/{{ product.productID }}?{{ filterQuery }}" method="post">
                     <div class="product-primary-fields">
                         <div class="product-basic-fields">
