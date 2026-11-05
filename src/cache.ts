@@ -15,14 +15,31 @@ export default async function cache(
 	if (cached && Date.now() - cached.timestamp < cached.ttl) {
 		return cached.value;
 	}
-	const value = await fn();
-	if (!value.ok) {
-		throw new Error("Failed to fetch cache value");
+	try {
+		const value = await fn();
+		if (!value.ok) {
+			const emptyData: unknown[] = [];
+			cacheMap.set(name, {
+				value: emptyData,
+				timestamp: Date.now(),
+				ttl: 60_000,
+			});
+			return emptyData;
+		}
+		const jsonData = await value.json();
+		cacheMap.set(name, {
+			value: jsonData,
+			timestamp: Date.now(),
+			ttl: 60_000,
+		});
+		return jsonData;
+	} catch {
+		const emptyData: unknown[] = [];
+		cacheMap.set(name, {
+			value: emptyData,
+			timestamp: Date.now(),
+			ttl: 60_000,
+		});
+		return emptyData;
 	}
-	cacheMap.set(name, {
-		value: value.json(),
-		timestamp: Date.now(),
-		ttl: 60_000,
-	});
-	return cacheMap.get(name)?.value;
 }

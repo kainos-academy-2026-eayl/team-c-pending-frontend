@@ -5,51 +5,109 @@ import Product, { ProductWithReviews } from "../schemas/product.schema";
 
 const router = Router();
 
-router.get("/", async (req: Request, res: Response) => {
-	let productData: globalThis.Response;
+export const productsController = async (req: Request, res: Response) => {
+	let productData: unknown;
 	if (req.query.category) {
 		const category = req.query.category.toString();
-		productData = await fetch(
-			`${process.env.API_ADDRESS}/products/category?category=${encodeURIComponent(category)}`,
+		productData = await cache(`products-category-${category}`, () =>
+			fetch(
+				`${process.env.API_ADDRESS}/products/category?category=${encodeURIComponent(category)}`,
+			),
 		);
 	} else {
-		productData = await fetch(`${process.env.API_ADDRESS}/products`);
+		productData = await cache(`products-all`, () =>
+			fetch(`${process.env.API_ADDRESS}/products`),
+		);
 	}
-	const products = z
-		.array(Product)
-		.parse(await productData.json())
-		.sort((a, b) => a.name.localeCompare(b.name));
+	const productsParsed = z.array(Product).safeParse(productData);
+	const products = productsParsed.success ? productsParsed.data : [];
+	const isHome = req.path === "/" && !req.query.category;
+	let bestSellers: z.infer<typeof Product>[] = [];
+	let bestSellersError = false;
+	if (isHome) {
+		try {
+			bestSellers = z
+				.array(Product)
+				.max(12)
+				.parse(
+					await cache("products-home-carousel", async () => {
+						const ranked = z
+							.array(Product)
+							.max(12)
+							.parse(
+								await cache("products-best-sellers", () =>
+									fetch(`${process.env.API_ADDRESS}/products/best-sellers`),
+								),
+							);
+						const selected = new Map(
+							ranked.map((product) => [product.id, product]),
+						);
+						const remaining = [
+							...new Map(
+								products
+									.filter((product) => !selected.has(product.id))
+									.map((product) => [product.id, product]),
+							).values(),
+						];
+						for (let index = remaining.length - 1; index > 0; index--) {
+							const randomIndex = Math.floor(Math.random() * (index + 1));
+							const current = remaining[index]!;
+							remaining[index] = remaining[randomIndex]!;
+							remaining[randomIndex] = current;
+						}
+						return globalThis.Response.json([
+							...selected.values(),
+							...remaining.slice(0, 12 - selected.size),
+						]);
+					}),
+				);
+		} catch (error) {
+			console.error("Failed to load best-selling products", error);
+			bestSellersError = true;
+		}
+	}
+	const categoriesData = await cache(`categories-all`, () =>
+		fetch(`${process.env.API_ADDRESS}/products/categories`),
+	);
+	const categories = Array.isArray(categoriesData) ? categoriesData : [];
 	res.render("products.njk", {
 		nextBackURL: req.originalUrl,
-		products,
+		products: [...products].sort((a, b) => a.name.localeCompare(b.name)),
+		bestSellers,
+		bestSellersError,
 		currentCategory: req.query.category,
-		categories: await cache(`categories-all`, () =>
-			fetch(`${process.env.API_ADDRESS}/products/categories`),
-		),
+		categories,
 	});
-});
+};
 
-router.get("/:id", async (req: Request, res: Response) => {
-	const id = req.params.id as string;
-	const productData = await fetch(
-		`${process.env.API_ADDRESS}/products/${encodeURIComponent(id)}`,
-	);
-	if (!productData.ok) {
-		return res
-			.status(productData.status)
-			.send(
-				productData.status === 404
-					? "Product not found"
-					: "Unable to load product",
-			);
+export const productController = async (req: Request, res: Response) => {
+	const result = z.coerce.number().int().positive().safeParse(req.params.id);
+	if (!result.success) {
+		return res.status(400).send("Invalid product ID");
 	}
-	const product = ProductWithReviews.parse(await productData.json());
-	const stars = Math.round(
-		product.reviews.reduce((acc, review) => acc + review.rating, 0) /
-			product.reviews.length,
-	);
-	res.render("product.njk", { product, stars });
-});
+	try {
+		const response = await fetch(
+			`${process.env.API_ADDRESS}/products/${result.data}`,
+		);
+		if (response.status === 404) {
+			return res.status(404).render("product.njk", { product: null });
+		}
+		if (!response.ok) {
+			return res.status(500).render("product.njk", { product: null });
+		}
+		const product = ProductWithReviews.parse(await response.json());
+		const stars = product.reviews.length
+			? Math.round(
+					product.reviews.reduce((acc, review) => acc + review.rating, 0) /
+						product.reviews.length,
+				)
+			: 0;
+		return res.render("product.njk", { product, stars });
+	} catch (error) {
+		console.error("Failed to load product", error);
+		return res.status(500).render("product.njk", { product: null });
+	}
+};
 
 router.get("/:id/add_review", async (req: Request, res: Response) => {
 	if (!res.locals.me) {
