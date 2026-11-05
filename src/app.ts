@@ -3,7 +3,7 @@ import nunjucks from "nunjucks";
 import { healthController } from "./controllers/health";
 import basketController from "./controllers/basket";
 import registerController from "./controllers/register";
-import { productsController } from "./controllers/products";
+import productsController from "./controllers/products";
 import { confirmationController } from "./controllers/confirmation";
 import cookieParser from "cookie-parser";
 import checkoutController from "./controllers/checkout";
@@ -89,8 +89,10 @@ export function createApp(): Express {
 
 	app.use("/checkout", checkoutController);
 
-	app.get("/", productsController);
-	app.get("/products", productsController);
+	app.get("/", (_, res) => {
+		res.redirect("/products");
+	});
+	app.use("/products", productsController);
 
 	app.get("/confirmation", confirmationController);
 	app.use("/basket", basketController);

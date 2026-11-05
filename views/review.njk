@@ -1,0 +1,30 @@
+{% extends "layout.njk" %}
+{% block content %}
+<main>
+    <center>
+
+        <a class="back-group" href="/products/{{product.productID}}/"><img class="back-icon" src="/back.svg"
+                alt="Back">Back</a>
+        <br>
+        <br>
+        <h1>What did you think of {{ product.name }}?</h1>
+        <div class="stars">
+            {% for i in range(5) %}
+            <a data-test-id="add-review-link-{{i}}"
+                href="/products/{{product.productID}}/add_review?rating={{ i + 1 }}"><img style="width: 3em;"
+                    src="{{ stars[i] }}" alt="Star"></a>
+            {% endfor %}
+            <br>
+            <br>
+            <div class="horizontal">
+                <a data-test-id="next-button"
+                    href="/products/{{product.productID}}/add_review_message?rating={{ rating }}"
+                    style="max-width: fit-content" class="main-button" type="submit">Next</a>
+                <br>
+                <br>
+                <br>
+            </div>
+        </div>
+    </center>
+</main>
+{% endblock %}
