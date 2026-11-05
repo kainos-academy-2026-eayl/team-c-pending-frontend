@@ -49,7 +49,6 @@ const OrderFilters = z.object({
 
 const RouteID = z.string().regex(/^[1-9]\d*$/);
 const DeleteParams = z.object({
-    section: z.literal("customers"),
     id: RouteID,
 });
 
@@ -172,7 +171,7 @@ router.get("/orders", async (req: Request, res: Response) => {
     });
 });
 
-router.get("/:section/:id/delete", (req: Request, res: Response) => {
+router.get("/customer/:id/delete", (req: Request, res: Response) => {
     if (!requireAdmin(req, res)) return;
     const params = DeleteParams.safeParse(req.params);
     if (!params.success) return res.status(400).send("Invalid deletion request");
@@ -183,7 +182,7 @@ router.get("/:section/:id/delete", (req: Request, res: Response) => {
     });
 });
 
-router.post("/:section/:id/delete", async (req: Request, res: Response) => {
+router.post("/customer/:id/delete", async (req: Request, res: Response) => {
     const token = requireAdmin(req, res);
     if (!token) return;
     const params = DeleteParams.safeParse(req.params);

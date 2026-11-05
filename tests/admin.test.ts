@@ -215,7 +215,7 @@ describe("Admin sections", () => {
 			.set("Cookie", "JWT_TOKEN=test-token").expect(200);
 		expect(response.text).toContain('class="admin-actions"');
 		expect(response.text).toContain('class="admin-delete-button"');
-		expect(response.text).toContain(`/admin/${section}/1/delete?`);
+		expect(response.text).toContain("/admin/customer/1/delete?");
 	});
 
 	it("orders customers by numeric ID", async () => {
@@ -232,39 +232,67 @@ describe("Admin sections", () => {
 			.toBeLessThan(response.text.indexOf("CustomerID: 10"));
 	});
 
-	it.each(["customers"])("confirms deletion of %s without modifying data", async (section) => {
-		const response = await request(createApp()).get(`/admin/${section}/2/delete`)
+	it("confirms customer deletion without modifying data", async () => {
+		const response = await request(createApp()).get("/admin/customer/2/delete")
 			.query({ search: "Blue & Ada", category: "Home" })
 			.set("Cookie", "JWT_TOKEN=test-token").expect(200);
 		expect(response.text).toContain("Confirm deletion");
 		expect(response.text).toContain("Cancel");
 		expect(response.text).toContain('name="confirm" value="delete"');
+		expect(response.text).toContain('action="/admin/customer/2/delete?');
+		expect(response.text).toContain('href="/admin/customers?');
 		expect(response.text).toContain("all of their orders, order items, and basket entries");
 		expect(apiFetch).toHaveBeenCalledTimes(1);
 	});
 
-	it.each(["customers"])("deletes %s and preserves filters", async (section) => {
-		const response = await request(createApp()).post(`/admin/${section}/2/delete`)
+	it.each(["customers"])("deletes %s and preserves the customer search filter", async (section) => {
+		const response = await request(createApp()).post("/admin/customer/2/delete")
 			.query({ search: "Blue & Ada", category: "Home" })
 			.set("Host", "localhost").set("Origin", "http://localhost")
 			.set("Cookie", "JWT_TOKEN=test-token").type("form")
 			.send({ confirm: "delete" }).expect(302);
 		const target = new URL(response.headers.location, "http://localhost");
-		expect(target.pathname).toBe(`/admin/${section}`);
+		expect(target.pathname).toBe("/admin/customers");
 		expect(target.searchParams.get("search")).toBe("Blue & Ada");
-		expect(target.searchParams.get("success")).toContain("deleted");
-		expect(target.searchParams.get("category")).toBe(section === "products" ? "Home" : null);
+		expect(target.searchParams.get("category")).toBeNull();
+		expect(target.searchParams.get("success")).toBe("Customer and their orders and basket deleted");
+		expect(apiFetch).toHaveBeenCalledTimes(2);
 		expect(apiFetch).toHaveBeenLastCalledWith(`http://api.example/${section}/2`, {
 			method: "DELETE", headers: { Authorization: "Bearer test-token" },
 		});
 	});
 
-	it.each(["customers"])("requires confirmation before deleting %s", async (section) => {
-		const response = await request(createApp()).post(`/admin/${section}/2/delete`)
+	it("requires confirmation before deleting a customer", async () => {
+		const response = await request(createApp()).post("/admin/customer/2/delete")
 			.set("Host", "localhost").set("Origin", "http://localhost")
 			.set("Cookie", "JWT_TOKEN=test-token").type("form").send({}).expect(302);
 		expect(new URL(response.headers.location, "http://localhost").searchParams.get("error"))
 			.toBe("Deletion must be confirmed");
+		expect(apiFetch).toHaveBeenCalledTimes(1);
+	});
+
+	it("reports customer deletion API failures without a success message", async () => {
+		apiFetch.mockResolvedValueOnce(Response.json(user))
+			.mockResolvedValueOnce(Response.json({ error: "Customer not found" }, { status: 404 }));
+		const response = await request(createApp()).post("/admin/customer/2/delete")
+			.query({ search: "Ada" })
+			.set("Host", "localhost").set("Origin", "http://localhost")
+			.set("Cookie", "JWT_TOKEN=test-token").type("form")
+			.send({ confirm: "delete" }).expect(302);
+		const target = new URL(response.headers.location, "http://localhost");
+		expect(target.pathname).toBe("/admin/customers");
+		expect(target.searchParams.get("search")).toBe("Ada");
+		expect(target.searchParams.get("error")).toBe("Customer not found");
+		expect(target.searchParams.has("success")).toBe(false);
+		expect(apiFetch).toHaveBeenCalledTimes(2);
+	});
+
+	it.each(["invalid", "0"])("rejects invalid customer deletion IDs before calling the API: %s", async (id) => {
+		const response = await request(createApp()).post(`/admin/customer/${id}/delete`)
+			.set("Host", "localhost").set("Origin", "http://localhost")
+			.set("Cookie", "JWT_TOKEN=test-token").type("form")
+			.send({ confirm: "delete" }).expect(400);
+		expect(response.text).toBe("Invalid deletion request");
 		expect(apiFetch).toHaveBeenCalledTimes(1);
 	});
 
@@ -346,7 +374,7 @@ describe("Admin sections", () => {
 	it.each(["get", "post"] as const)("rejects obsolete product deletion via %s", async (method) => {
 		await request(createApp())[method]("/admin/products/2/delete")
 			.set("Host", "localhost").set("Origin", "http://localhost")
-			.set("Cookie", "JWT_TOKEN=test-token").expect(400);
+			.set("Cookie", "JWT_TOKEN=test-token").expect(404);
 		expect(apiFetch).toHaveBeenCalledTimes(1);
 	});
 
@@ -362,24 +390,25 @@ describe("Admin sections", () => {
 	});
 
 	it.each(["get", "post"] as const)("protects %s deletion routes", async (method) => {
-		await request(createApp())[method]("/admin/customers/2/delete")
+		const path = "/admin/customer/2/delete";
+		await request(createApp())[method](path)
 			.set("Host", "localhost").set("Origin", "http://localhost")
 			.expect(302).expect("Location", "/login");
 		apiFetch.mockResolvedValueOnce(Response.json({ ...user, role: "customer" }));
-		await request(createApp())[method]("/admin/customers/2/delete")
+		await request(createApp())[method](path)
 			.set("Host", "localhost").set("Origin", "http://localhost")
 			.set("Cookie", "JWT_TOKEN=test-token").expect(302).expect("Location", "/");
 		expect(apiFetch).toHaveBeenCalledTimes(1);
 	});
 
 	it("rejects cross-origin deletion before contacting the API", async () => {
-		await request(createApp()).post("/admin/customers/2/delete")
+		await request(createApp()).post("/admin/customer/2/delete")
 			.set("Host", "localhost").set("Origin", "https://other.example")
 			.set("Cookie", "JWT_TOKEN=test-token").type("form").send({ confirm: "delete" }).expect(403);
 		expect(apiFetch).not.toHaveBeenCalled();
 	});
 
-	it.each(["customers/invalid", "products/0", "orders/2"])("rejects invalid deletion parameters: %s", async (path) => {
+	it.each(["customer/invalid", "customer/0"])("rejects invalid deletion parameters: %s", async (path) => {
 		await request(createApp()).get(`/admin/${path}/delete`)
 			.set("Cookie", "JWT_TOKEN=test-token").expect(400);
 		expect(apiFetch).toHaveBeenCalledTimes(1);
