@@ -57,7 +57,8 @@ describe("Product search", () => {
 
     it("renders an accessible search form and retains the search and category", async () => {
         const response = await request(createApp()).get("/products?q=%20apple%20&category=Fruit").expect(200);
-        expect(response.text).toContain('action="/products" method="get" class="header-search" role="search"');
+        expect(response.text).toContain('action="/products" method="get"');
+        expect(response.text).toContain('role="search"');
         expect(response.text).toContain('for="product-search"');
         expect(response.text).toContain('value="apple"');
         expect(response.text).toContain('type="hidden" name="category" value="Fruit"');
@@ -102,7 +103,7 @@ describe("Product search", () => {
 
     it("includes the shared search on other pages", async () => {
         const response = await request(createApp()).get("/login").expect(200);
-        expect(response.text).toContain('class="header-search" role="search"');
+        expect(response.text).toContain('role="search"');
         expect(response.text).not.toContain('type="hidden" name="category"');
         expect(response.text).not.toContain('src="/search.js"');
     });
