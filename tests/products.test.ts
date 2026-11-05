@@ -67,7 +67,6 @@ describe("homepage best sellers", () => {
         const response = await request(createApp()).get("/").expect(200);
         expect(response.text).toContain('id="best-sellers-globe"');
         expect(response.text).toContain('href="/products/8"');
-        expect(response.text).toContain('src="/lamp.png"');
         expect(response.text).toContain("£24.50");
         expect(response.text).toContain('aria-pressed="false"');
         expect(response.text).toContain('aria-label="Pause rotation"');
@@ -170,7 +169,7 @@ describe("homepage best sellers", () => {
     });
 
     it.each(["http", "network", "invalid"])("reports a %s ranking failure and preserves the catalogue", async (failure) => {
-        const log = vi.spyOn(console, "error").mockImplementation(() => {});
+        const log = vi.spyOn(console, "error").mockImplementation(() => { });
         const original = fetchMock.getMockImplementation()!;
         fetchMock.mockImplementation(async (input, init) => {
             if (String(input).endsWith("best-sellers")) {

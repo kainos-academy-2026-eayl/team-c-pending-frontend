@@ -9,19 +9,29 @@
 {% block header %}Products Page{% endblock %}
 {% block content %}
 {% if bestSellersError %}
-<p class="best-sellers-error" role="status">Best sellers are unavailable right now. <a href="/">Try again</a> or browse all products below.</p>
+<p class="best-sellers-error" role="status">Best sellers are unavailable right now. <a href="/">Try again</a> or browse
+    all products below.</p>
 {% elif bestSellers.length %}
 <section class="best-sellers" aria-labelledby="best-sellers-title">
     <div class="best-sellers-heading">
         <h2 id="best-sellers-title">Best sellers</h2>
         <div class="globe-controls">
             <div class="globe-navigation" hidden>
-                <button type="button" tabindex="-1" data-carousel-step="-1" aria-controls="best-sellers-globe" aria-label="Previous best seller">&lsaquo;</button>
-                <button type="button" tabindex="-1" data-carousel-step="1" aria-controls="best-sellers-globe" aria-label="Next best seller">&rsaquo;</button>
+                <button type="button" tabindex="-1" data-carousel-step="-1" aria-controls="best-sellers-globe"
+                    aria-label="Previous best seller">&lsaquo;</button>
+                <button type="button" tabindex="-1" data-carousel-step="1" aria-controls="best-sellers-globe"
+                    aria-label="Next best seller">&rsaquo;</button>
             </div>
-            <button class="globe-toggle" type="button" tabindex="-1" aria-controls="best-sellers-globe" aria-label="Pause rotation" title="Pause rotation" aria-pressed="false" hidden>
-                <svg class="carousel-pause-icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4 3h3v10H4zm5 0h3v10H9z"/></svg>
-                <svg class="carousel-play-icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="m5 2 9 6-9 6z"/></svg>
+            <button class="globe-toggle" type="button" tabindex="-1" aria-controls="best-sellers-globe"
+                aria-label="Pause rotation" title="Pause rotation" aria-pressed="false" hidden>
+                <svg class="carousel-pause-icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"
+                    focusable="false">
+                    <path fill="currentColor" d="M4 3h3v10H4zm5 0h3v10H9z" />
+                </svg>
+                <svg class="carousel-play-icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"
+                    focusable="false">
+                    <path fill="currentColor" d="m5 2 9 6-9 6z" />
+                </svg>
             </button>
         </div>
     </div>
@@ -30,7 +40,7 @@
         <li class="globe-item">
             <a class="globe-product" tabindex="-1" href="/products/{{ product.id }}">
                 {% if product.image %}
-                <img src="{{ product.image }}" alt="" width="56" height="56">
+                <img src="{{backendUrl}}{{ product.image }}" alt="" width="56" height="56">
                 {% endif %}
                 <span class="globe-image-placeholder" {% if product.image %}hidden{% endif %}>No image</span>
                 <span class="globe-product-name">{{ product.name }}</span>
