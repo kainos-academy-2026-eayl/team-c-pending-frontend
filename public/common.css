@@ -54,8 +54,12 @@ input {
 }
 
 .password-field button {
-	width: auto;
+	width: 64px;
+	height: 40px;
 	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .main-button {
@@ -94,6 +98,15 @@ header {
 	flex-flow: row wrap;
 }
 
+a {
+	color: white;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
 header a {
 	color: white;
 	text-decoration: none;
@@ -107,6 +120,7 @@ header a:hover {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	flex-flow: wrap;
 }
 
 .text-align-right {
@@ -181,4 +195,24 @@ main {
 	background-color: darkred;
 	cursor: not-allowed;
 	pointer-events: none;
+}
+
+.no-background {
+	background: none;
+}
+
+textarea {
+	width: 100%;
+	background: none;
+	color: white;
+	box-sizing: border-box;
+	border: 2px solid rgba(255, 255, 255, 0.3);
+	border-radius: 5px;
+	resize: none;
+	height: 10em;
+}
+
+.back-group {
+	display: flex;
+	align-items: center;
 }

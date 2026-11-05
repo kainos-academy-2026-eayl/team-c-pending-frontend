@@ -1,4 +1,5 @@
 import z from "zod";
+import productSchema from "./product.schema";
 
 export default z.object({
 	orderID: z.int(),
@@ -9,6 +10,7 @@ export default z.object({
 			quantity: z.int(),
 			orderItemID: z.int(),
 			itemStatus: z.string(),
+			product: productSchema,
 		}),
 	),
 	type: z.string(),

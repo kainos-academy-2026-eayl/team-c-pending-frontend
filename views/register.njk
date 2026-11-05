@@ -7,28 +7,35 @@
     <p style="color: red;">{{ error }}</p>
     {% endif %}
     <label for="first-name">Name:</label><br>
-    <input type="text" data-test-id="first-name" id="first-name" name="first-name">
+    <input type="text" data-test-id="first-name" id="first-name" name="first-name" value="{{ firstName or '' }}">
     <br>
     <label for="last-name">Surname:</label><br>
-    <input type="text" data-test-id="last-name" id="last-name" name="last-name">
+    <input type="text" data-test-id="last-name" id="last-name" name="last-name" value="{{ lastName or '' }}">
     <br>
     <label for="email">Email:</label><br>
-    <input type="email" data-test-id="email" id="email" name="email">
+    <input type="email" data-test-id="email" id="email" name="email" value="{{ email or '' }}">
     <br>
     <label for="password">Password:</label><br>
     <div class="password-field">
-        <input type="password" data-test-id="password" id="password" name="password">
-        <button class="main-button" type="button" id="toggle-password" aria-controls="password">Show</button>
+        <input type="{% if visiblePasswordField == 'password' %}text{% else %}password{% endif %}"
+            data-test-id="password" id="password" name="password" value="{{ password or '' }}">
+        <button class="main-button" type="submit" data-test-id="show-password" name="passwordVisibility"
+            value="{% if visiblePasswordField == 'password' %}hide-password{% else %}show-password{% endif %}"
+            aria-controls="password"
+            aria-pressed="{% if visiblePasswordField == 'password' %}true{% else %}false{% endif %}">{% if visiblePasswordField == 'password' %}Hide{% else %}Show{% endif %}</button>
     </div>
     <br>
     <label for="confirm-password">Confirm Password:</label><br>
     <div class="password-field">
-        <input type="password" data-test-id="confirm-password" id="confirm-password" name="confirm-password">
-        <button class="main-button" type="button" id="toggle-confirm-password"
-            aria-controls="confirm-password">Show</button>
+        <input type="{% if visiblePasswordField == 'confirm-password' %}text{% else %}password{% endif %}"
+            id="confirm-password" name="confirm-password" value="{{ confirmPassword or '' }}">
+        <button class="main-button" type="submit" data-test-id="show-confirm-password" id="toggle-confirm-password"
+            aria-controls="confirm-password" name="passwordVisibility"
+            value="{% if visiblePasswordField == 'confirm-password' %}hide-confirm-password{% else %}show-confirm-password{% endif %}"
+            aria-pressed="{% if visiblePasswordField == 'confirm-password' %}true{% else %}false{% endif %}">{% if visiblePasswordField == 'confirm-password' %}Hide{% else %}Show{% endif %}</button>
     </div>
     <br>
+    <p>Already have an account? <a href="/login">Click here!</a></p>
     <button class="main-button" data-test-id="register-button" type="submit">Register</button>
 </form>
-<script defer src="/showPassword.js"></script>
-{% endblock %}
+{% endblock %}s

@@ -1,36 +1,46 @@
 {% extends "layout.njk" %}
 {% block head %}
+<link rel="stylesheet" href="/account.css">
 {% endblock %}
 {% block title %}Account Menu{% endblock %}
 {% block header %}Account Menu{% endblock %}
 {% block content %}
 <main>
-    <center>
-        <h2>Account details</h2>
-        <p>Customer ID: {{ customerId }}</p>
-        <p>Name: {{ firstName }} {{ lastName }}</p>
-        <p>Email: {{ email }}</p>
 
-        <h2>Order history</h2>
-        <div class="orders-container">
-            {% for order in orders %}
-            <div class="product">
-                <h3>Order ID: {{ order.orderID }}</h3>
-                <p>Price: £{{ order.price }}</p>
-                <p>Items:
-                    {% for item in order.orderItems %}
-                <p>Product ID: {{ item.productID }}, Quantity: {{ item.quantity }}, Unit Price: £{{ item.unitPrice }},
-                    Status: {{ item.itemStatus }}</p>
+    <h2>Account details</h2>
+    <p>Customer ID: {{ customerId }}</p>
+    <p>Name: {{ firstName }} {{ lastName }}</p>
+    <p>Email: {{ email }}</p>
+
+    <h2>Order history</h2>
+    <div class="orders-container">
+        {% for order in orders %}
+        <div class="order">
+            <h3>Order ID: {{ order.orderID }}</h3>
+            <p>Price: £{{ order.price | pounds }}</p>
+            <p>Items:
+            <table>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                </tr>
+                {% for item in order.orderItems %}
+                <tr>
+                    <td>{{ item.product.name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>£{{ (item.product.price*item.quantity) | pounds }}</td>
+                </tr>
                 {% endfor %}
-                </p>
-                <p>Customer ID: {{ order.customerID }}</p>
-            </div>
-            {% endfor %}
-            <h2>Account controls</h2>
-            <form action="/logout" method="post">
-                <button class="main-button" data-test-id="logout-button" type="submit">Logout</button>
-            </form>
+            </table>
+            </p>
         </div>
-    </center>
+        {% endfor %}
+        <h2>Account controls</h2>
+        <form action="/logout" method="post">
+            <button class="main-button" data-test-id="logout-button" type="submit">Logout</button>
+        </form>
+    </div>
+
 </main>
 {% endblock %}

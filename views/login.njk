@@ -7,16 +7,19 @@
     <p style="color: red;">{{ error }}</p>
     {% endif %}
     <label for="email">Email:</label><br>
-    <input type="email" data-test-id="email" id="email" name="email">
+    <input type="email" data-test-id="email" id="email" name="email" value="{{ email or '' }}">
     <br>
     <label for="password">Password:</label><br>
     <div class="password-field">
-        <input type="password" data-test-id="password" id="password" name="password">
-        <button class="main-button" type="button" id="toggle-password" aria-controls="password">Show</button>
+        <input type="{% if passwordVisible %}text{% else %}password{% endif %}" data-test-id="password" id="password"
+            name="password" value="{{ password or '' }}">
+        <button class="main-button" type="submit" data-test-id="show-password" name="passwordVisibility"
+            value="{% if passwordVisible %}hide{% else %}show{% endif %}" aria-controls="password"
+            aria-pressed="{% if passwordVisible %}true{% else %}false{% endif %}">{% if passwordVisible %}Hide{% else %}Show{% endif %}</button>
     </div>
     <br>
+    <p>Don't have an account? <a href="/register">Click here!</a></p>
     <p><a href="/password-reset">Forgot your password?</a></p>
     <button class="main-button" data-test-id="login-button" type="submit">Login</button>
 </form>
-<script defer src="/showPassword.js"></script>
 {% endblock %}

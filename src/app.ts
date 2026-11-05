@@ -9,7 +9,7 @@ import { confirmationController } from "./controllers/confirmation";
 import { healthController } from "./controllers/health";
 import loginController from "./controllers/login";
 import { logoutController } from "./controllers/logout";
-import { productsController } from "./controllers/products";
+import productsController from "./controllers/products";
 import registerController from "./controllers/register";
 import "dotenv/config";
 import { passwordResetController } from "./controllers/passwordReset";
@@ -89,8 +89,10 @@ export function createApp(): Express {
 
 	app.use("/checkout", checkoutController);
 
-	app.get("/", productsController);
-	app.get("/products", productsController);
+	app.get("/", (_, res) => {
+		res.redirect("/products");
+	});
+	app.use("/products", productsController);
 
 	app.get("/confirmation", confirmationController);
 	app.use("/basket", basketController);
