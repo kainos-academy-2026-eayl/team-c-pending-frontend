@@ -296,6 +296,25 @@ describe("Admin sections", () => {
 		expect(apiFetch).toHaveBeenCalledTimes(1);
 	});
 
+	it("normalizes product IDs while retaining visibility and numeric ordering", async () => {
+		apiFetch.mockResolvedValueOnce(Response.json(user))
+			.mockResolvedValueOnce(Response.json([
+				{ ...products[1], productID: undefined, id: 10 },
+				{ ...products[0], productID: undefined, id: 2 },
+			]));
+		const response = await request(createApp()).get("/admin/products")
+			.set("Cookie", "JWT_TOKEN=test-token").expect(200);
+		const productBoxes = [...response.text.matchAll(/<fieldset>([\s\S]*?)<\/fieldset>/g)];
+		expect(productBoxes).toHaveLength(2);
+		expect(productBoxes[0]![1]).toContain("ProductID: 2");
+		expect(productBoxes[0]![1]).toContain('/admin/products/2/visibility?');
+		expect(productBoxes[0]![1]).toContain('name="hide" value="true"');
+		expect(productBoxes[1]![1]).toContain("ProductID: 10");
+		expect(productBoxes[1]![1]).toContain('/admin/products/10/visibility?');
+		expect(productBoxes[1]![1]).toContain('name="hide" value="false"');
+	});
+	});
+
 	it("shows add/delete visibility controls inside each product box", async () => {
 		const response = await request(createApp()).get("/admin/products")
 			.set("Cookie", "JWT_TOKEN=test-token").expect(200);
