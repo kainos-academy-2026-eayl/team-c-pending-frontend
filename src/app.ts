@@ -3,7 +3,7 @@ import nunjucks from "nunjucks";
 import { healthController } from "./controllers/health";
 import basketController from "./controllers/basket";
 import registerController from "./controllers/register";
-import productsController from "./controllers/products";
+import productReviewsController, { productController, productsController } from "./controllers/products";
 import { confirmationController } from "./controllers/confirmation";
 import cookieParser from "cookie-parser";
 import checkoutController from "./controllers/checkout";
@@ -82,6 +82,9 @@ export function createApp(): Express {
 		return num.toFixed(length || 2);
 	});
 
+	const asyncHandler = (fn: (req: express.Request, res: express.Response) => Promise<any>) => 
+		(req: express.Request, res: express.Response, next: express.NextFunction) => Promise.resolve(fn(req, res)).catch(next);
+
 	app.get("/health", healthController);
 
 	app.use("/login", loginController);
@@ -90,10 +93,10 @@ export function createApp(): Express {
 
 	app.use("/checkout", checkoutController);
 
-	app.get("/", (_, res) => {
-		res.redirect("/products");
-	});
-	app.use("/products", productsController);
+	app.get("/", asyncHandler(productsController));
+	app.get("/products", asyncHandler(productsController));
+	app.get("/products/:id", asyncHandler(productController));
+	app.use("/products", productReviewsController);
 
 	app.get("/confirmation", confirmationController);
 	app.use("/basket", basketController);
@@ -102,6 +105,11 @@ export function createApp(): Express {
 	app.get("/account", accountController);
 	app.use("/admin", adminController);
 	app.post("/logout", logoutController);
+
+	app.use((err: Error, _req: express.Request, res: express.Response) => {
+		console.error("Unhandled error:", err);
+		res.status(500).render("error.njk", { error: err.message });
+	});
 
 	return app;
 
