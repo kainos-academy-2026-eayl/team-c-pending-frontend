@@ -209,7 +209,7 @@ router.get(["/customers", "/products"], async (req: Request, res: Response) => {
     const token = requireAdmin(req, res);
     if (!token) return;
 
-    const section = req.path === "/customers" ? "customers" : "products";
+    const section = req.path.replace(/\/$/, "").toLowerCase() === "/customers" ? "customers" : "products";
     const apiPath = section === "products" ? "products/admin" : "customers";
     const response = await fetch(`${process.env.API_ADDRESS}/${apiPath}`, {
         headers: { Authorization: `Bearer ${token}` },
