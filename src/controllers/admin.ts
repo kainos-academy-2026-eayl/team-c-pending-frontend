@@ -183,7 +183,7 @@ router.get("/:section/:id/delete", (req: Request, res: Response) => {
     });
 });
 
-router.post("/:customer/:id/delete", async (req: Request, res: Response) => {
+router.post("/:section/:id/delete", async (req: Request, res: Response) => {
     const token = requireAdmin(req, res);
     if (!token) return;
     const params = DeleteParams.safeParse(req.params);
