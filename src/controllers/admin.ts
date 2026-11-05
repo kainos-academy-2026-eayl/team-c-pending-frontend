@@ -227,7 +227,7 @@ router.get(["/customers", "/products"], async (req: Request, res: Response) => {
         ).sort((a, b) => a.customerID - b.customerID)
         : [];
     const allProducts = section === "products"
-        ? z.array(Product.extend({ hide: z.boolean() })).parse(await response.json())
+        ? z.array(Product.and(z.object({ hide: z.boolean() }))).parse(await response.json())
         : [];
     const categories = [...new Set(allProducts.map((product) => product.category))]
         .sort((a, b) => a.localeCompare(b));
