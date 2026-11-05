@@ -45,6 +45,10 @@ curl http://localhost:3000/health
 
 Use `npm ci` rather than `npm install`. It installs the exact versions recorded in `package-lock.json`, so everyone on the team runs identical dependencies. Use `npm install` only when you are deliberately adding or upgrading a package.
 
+## Validation
+
+Run `npm run lint`, `npm test`, and `npm run build` before submitting changes. Lint uses `@biomejs/biome` with the repository's recommended rules, formatter, and import checks; Git-ignored dependencies and build output are excluded. Use `npm run lint:fix` for safe automatic fixes, then review the diff and rerun validation.
+
 ## Making it your own
 
 After clicking **Use this template** on GitHub and creating your own repository:

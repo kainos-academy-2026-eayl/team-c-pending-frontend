@@ -1,27 +1,32 @@
 import type { Request, Response } from "express";
-import Order from "../schemas/order.schema";
 import z from "zod";
+import Order from "../schemas/order.schema";
 
 export const accountController = async (req: Request, res: Response) => {
-    const jwt = req.cookies.JWT_TOKEN as string | undefined;
+	const jwt = req.cookies.JWT_TOKEN as string | undefined;
+	if (jwt) {
+		const user = res.locals.me;
 
-    if (jwt) {
-        const user = res.locals.me;
+		const response = await fetch(`${process.env.API_ADDRESS}/orders`, {
+			headers: { Authorization: `Bearer ${jwt}` },
+		});
 
-        const response = await fetch(`${process.env.API_ADDRESS}/orders`, { headers: { "Authorization": `Bearer ${jwt}` } });
+		const orders = z.array(Order).parse(await response.json());
 
-        const orders = z.array(Order).parse(await response.json());
-
-        res.render("accountMenu.njk",
-            {
-                orders: orders.map(order => ({ ...order, price: order.orderItems.reduce((total, item) => total + item.product.price * item.quantity, 0) })),
-                firstName: user.firstName,
-                lastName: user.lastName,
-                email: user.email,
-                customerId: user.customerId
-            }
-        );
-    } else {
-        res.redirect("/login");
-    }
+		res.render("accountMenu.njk", {
+			orders: orders.map((order) => ({
+				...order,
+				price: order.orderItems.reduce(
+					(total, item) => total + item.product.price * item.quantity,
+					0,
+				),
+			})),
+			firstName: user.firstName,
+			lastName: user.lastName,
+			email: user.email,
+			customerId: user.customerId,
+		});
+	} else {
+		res.redirect("/login");
+	}
 };

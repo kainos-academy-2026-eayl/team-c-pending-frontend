@@ -24,15 +24,29 @@ describe("GET /health", () => {
 
 		expect(response.body).toHaveProperty("status", "ok");
 	});
+
+	describe("GET /confirmation", () => {
+		it("renders the confirmation page using the Express response", async () => {
+			const response = await request(createApp())
+				.get("/confirmation")
+				.expect(200);
+
+			expect(response.text).toContain("Your order is confirmed");
+		});
+	});
 });
 
 describe("Unmatched routes", () => {
-	it.each(["get", "post"] as const)("returns 404 for an unknown %s route", async (method) => {
-		await request(createApp())[method]("/unknown")
-			.set("Host", "localhost")
-			.set("Origin", "http://localhost")
-			.expect(404);
-	});
+	it.each(["get", "post"] as const)(
+		"returns 404 for an unknown %s route",
+		async (method) => {
+			await request(createApp())
+				[method]("/unknown")
+				.set("Host", "localhost")
+				.set("Origin", "http://localhost")
+				.expect(404);
+		},
+	);
 });
 
 describe("CSRF protection", () => {
@@ -68,10 +82,14 @@ describe("Password visibility without client-side JavaScript", () => {
 
 			expect(response.headers["cache-control"]).toContain("no-store");
 			expect(response.text).toMatch(
-				new RegExp(`type="${inputType}"[^>]*name="password"[^>]*value="secret"`),
+				new RegExp(
+					`type="${inputType}"[^>]*name="password"[^>]*value="secret"`,
+				),
 			);
 			expect(response.text).toMatch(
-				new RegExp(`value="${nextAction}"[^>]*aria-pressed="${pressed}">${label}</button>`),
+				new RegExp(
+					`value="${nextAction}"[^>]*aria-pressed="${pressed}">${label}</button>`,
+				),
 			);
 			expect(response.text).toContain('value="person@example.test"');
 			expect(response.text).not.toContain("<script");
@@ -101,7 +119,9 @@ describe("Password visibility without client-side JavaScript", () => {
 				.expect(200);
 
 			expect(response.text).toMatch(
-				new RegExp(`type="${inputType}"[^>]*name="password"[^>]*value="secret"`),
+				new RegExp(
+					`type="${inputType}"[^>]*name="password"[^>]*value="secret"`,
+				),
 			);
 			expect(response.text).toMatch(
 				new RegExp(`value="${nextAction}"[^>]*>${label}</button>`),

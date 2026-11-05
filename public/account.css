@@ -1,9 +1,9 @@
 table,
 td,
 th {
-    border: 2px solid rgba(255, 255, 255, 0.3);
+	border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 th {
-    min-width: 6em;
+	min-width: 10em;
 }

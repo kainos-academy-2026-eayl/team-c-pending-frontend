@@ -1,20 +1,23 @@
+import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
 import express, { type Express } from "express";
 import nunjucks from "nunjucks";
-import { healthController } from "./controllers/health";
-import basketController from "./controllers/basket";
-import registerController from "./controllers/register";
-import productReviewsController, { productController, productsController } from "./controllers/products";
-import { confirmationController } from "./controllers/confirmation";
-import cookieParser from "cookie-parser";
-import checkoutController from "./controllers/checkout";
-import loginController from "./controllers/login";
-import { logoutController } from "./controllers/logout";
 import { accountController } from "./controllers/account";
 import adminController from "./controllers/admin";
-import bodyParser from "body-parser";
+import basketController from "./controllers/basket";
+import checkoutController from "./controllers/checkout";
+import { confirmationController } from "./controllers/confirmation";
+import { healthController } from "./controllers/health";
+import loginController from "./controllers/login";
+import { logoutController } from "./controllers/logout";
+import productReviewsController, {
+	productController,
+	productsController,
+} from "./controllers/products";
+import registerController from "./controllers/register";
 import "dotenv/config";
-import User from "./schemas/user.schema";
 import { passwordResetController } from "./controllers/passwordReset";
+import User from "./schemas/user.schema";
 
 export function createApp(): Express {
 	const app = express();
@@ -29,7 +32,9 @@ export function createApp(): Express {
 				return res.sendStatus(403);
 			}
 			try {
-				if (new URL(origin).origin !== new URL(`${req.protocol}://${host}`).origin) {
+				if (
+					new URL(origin).origin !== new URL(`${req.protocol}://${host}`).origin
+				) {
 					return res.sendStatus(403);
 				}
 			} catch {
@@ -43,8 +48,8 @@ export function createApp(): Express {
 			const token = req.cookies.JWT_TOKEN;
 			const me = await fetch(`${process.env.API_ADDRESS}/me`, {
 				headers: {
-					Authorization: `Bearer ${token}`
-				}
+					Authorization: `Bearer ${token}`,
+				},
 			});
 			if (me.status === 200) {
 				const meData = User.parse(await me.json());
@@ -78,12 +83,12 @@ export function createApp(): Express {
 		noCache: true,
 	});
 
-	env.addFilter('pounds', function (num, length) {
-		return num.toFixed(length || 2);
-	});
+	env.addFilter("pounds", (num, length) => num.toFixed(length || 2));
 
-	const asyncHandler = (fn: (req: express.Request, res: express.Response) => Promise<any>) =>
-		(req: express.Request, res: express.Response, next: express.NextFunction) => Promise.resolve(fn(req, res)).catch(next);
+	const asyncHandler =
+		(fn: (req: express.Request, res: express.Response) => Promise<unknown>) =>
+		(req: express.Request, res: express.Response, next: express.NextFunction) =>
+			Promise.resolve(fn(req, res)).catch(next);
 
 	app.get("/health", healthController);
 
@@ -106,11 +111,17 @@ export function createApp(): Express {
 	app.use("/admin", adminController);
 	app.post("/logout", logoutController);
 
-	app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-		console.error("Unhandled error:", err);
-		res.status(500).render("error.njk", { error: err.message });
-	});
+	app.use(
+		(
+			err: Error,
+			_req: express.Request,
+			res: express.Response,
+			_next: express.NextFunction,
+		) => {
+			console.error("Unhandled error:", err);
+			res.status(500).render("error.njk", { error: err.message });
+		},
+	);
 
 	return app;
-
 }

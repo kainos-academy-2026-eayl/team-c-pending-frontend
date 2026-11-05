@@ -1,29 +1,29 @@
 .basket-products-list {
-    list-style-type: none;
-    display: flex;
-    flex-direction: column;
-    padding: 0;
-    margin: 0;
-    gap: 2px;
+	list-style-type: none;
+	display: flex;
+	flex-direction: column;
+	padding: 0;
+	margin: 0;
+	gap: 2px;
 }
 
 .basket-products-list li {
-    border-top: 2px solid rgba(255, 255, 255, 0.3);
+	border-top: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .quantity-controls {
-    display: flex;
-    align-items: center;
-    gap: 3px;
+	display: flex;
+	align-items: center;
+	gap: 3px;
 }
 
 .quantity-controls button {
-    background: none;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    color: white;
-    background-color: #256529;
-    width: 2em;
-    height: 2em;
+	background: none;
+	border-radius: 5px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	border: 2px solid rgba(255, 255, 255, 0.3);
+	color: white;
+	background-color: #256529;
+	width: 2em;
+	height: 2em;
 }
