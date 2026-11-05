@@ -1,8 +1,9 @@
 import z from "zod";
 
-const Product = z.object({
+const ProductFields = z.object({
     name: z.string(),
-    productID: z.number(),
+    productID: z.number().optional(),
+    id: z.number().optional(),
     price: z.number(),
     description: z.string(),
     category: z.string(),
@@ -10,7 +11,19 @@ const Product = z.object({
     image: z.string().nullable(),
 });
 
-export const ProductWithReviews = Product.extend({
+const normalizeProduct = ({ productID, id, ...product }: z.infer<typeof ProductFields>) => ({
+    ...product,
+    productID: productID ?? id!,
+    id: productID ?? id!,
+});
+
+const Product = ProductFields.refine(
+    (data) => data.productID !== undefined || data.id !== undefined,
+    "Must have either productID or id"
+)
+.transform(normalizeProduct);
+
+export const ProductWithReviews = ProductFields.extend({
     reviews: z.array(z.object({
         rating: z.number(),
         comment: z.string().optional(),
@@ -19,7 +32,12 @@ export const ProductWithReviews = Product.extend({
             firstName: z.string(),
             lastName: z.string()
         })
-    }))
-});
+    })).default([])
+})
+.refine(
+    (data) => data.productID !== undefined || data.id !== undefined,
+    "Must have either productID or id"
+)
+.transform(({ reviews, ...product }) => ({ ...normalizeProduct(product), reviews }));
 
 export default Product;
