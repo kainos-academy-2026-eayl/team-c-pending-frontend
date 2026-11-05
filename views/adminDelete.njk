@@ -1,0 +1,16 @@
+{% extends "layout.njk" %}
+{% block title %}Confirm deletion{% endblock %}
+{% block head %}<link rel="stylesheet" href="/admin.css">{% endblock %}
+{% block content %}
+<main class="admin-portal">
+    <h2>Confirm deletion</h2>
+    <p>Delete customer #{{ id }} permanently? This also deletes all of their orders, order items, and basket entries.</p>
+    <p>This action cannot be undone.</p>
+    <form action="/admin/customer/{{ id }}/delete?{{ filterQuery }}" method="post">
+        <div class="admin-actions">
+            <button class="admin-delete-button" type="submit" name="confirm" value="delete">Confirm deletion</button>
+            <a href="/admin/customers?{{ filterQuery }}">Cancel</a>
+        </div>
+    </form>
+</main>
+{% endblock %}

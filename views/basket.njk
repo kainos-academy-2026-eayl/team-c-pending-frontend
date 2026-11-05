@@ -28,8 +28,7 @@ Basket
                             <input type="number" name="productID" hidden value="{{item.product.productID}}">
                             <input type="number" name="quantity" hidden value="-1">
                             <input type="text" name="quantityMode" hidden value="relative">
-                            <button type="submit" data-test-id="{{item.product.id}}-decrease-quantity"
-                                type="button">-</button>
+                            <button type="submit" data-test-id="decrease-quantity" type="button">-</button>
                         </form>
                         <span data-test-id="quantity">{{ item.quantity }}</span>
                         {% if item.quantity < item.product.quantity %}
@@ -37,8 +36,7 @@ Basket
                             <input type="number" name="productID" hidden value="{{item.product.productID}}">
                             <input type="number" name="quantity" hidden value="1">
                             <input type="text" name="quantityMode" hidden value="relative">
-                            <button type="submit" data-test-id="{{item.product.id}}-increase-quantity"
-                                type="button">+</button>
+                            <button type="submit" data-test-id="increase-quantity" type="button">+</button>
                         </form>
                         {% endif %}
                     </div>
@@ -60,3 +58,7 @@ Basket
     {% endif %}
     {% endblock %}
 </main>
+
+<script>
+
+</script>
