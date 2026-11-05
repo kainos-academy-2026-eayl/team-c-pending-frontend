@@ -61,16 +61,16 @@ p {
 	margin-bottom: 10px;
 }
 
-.products-container>p[role="status"] {
-    color: white;
+.products-container > p[role="status"] {
+	color: white;
 }
 
 #search-status {
-    color: white;
+	color: white;
 }
 
 #search-status:empty {
-    display: none;
+	display: none;
 }
 
 .product-detail {

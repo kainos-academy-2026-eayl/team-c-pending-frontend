@@ -1,6 +1,6 @@
-import { Router, type Request, type Response } from "express";
-import cache from "../cache";
+import { type Request, type Response, Router } from "express";
 import { z } from "zod";
+import cache from "../cache";
 import Product, { ProductWithReviews } from "../schemas/product.schema";
 
 const router = Router();
@@ -23,7 +23,7 @@ export const productsController = async (req: Request, res: Response) => {
 		if (!response.ok) productErrorStatus = response.status;
 		return response;
 	};
-	let productData;
+	let productData: unknown;
 	if (category) {
 		productData = await cache(`products-category-${category}`, () =>
 			loadProducts(
