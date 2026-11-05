@@ -60,7 +60,7 @@ describe("homepage best sellers", () => {
         const interactiveElements = section.match(/<(?:a|button)\b[^>]*>/g)!;
         expect(interactiveElements).toHaveLength(4);
         expect(interactiveElements.every(element => element.includes('tabindex="-1"'))).toBe(true);
-        expect(response.text).toContain('<a href="/products"');
+        expect(response.text).toContain('<a href="/products?q="');
     });
 
     it("renders real rankings with product links, images, prices, and a pause control", async () => {

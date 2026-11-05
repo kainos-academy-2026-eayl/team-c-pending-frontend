@@ -13,6 +13,15 @@
     <div class="content">
         <header>
             <h1><a href="/">Pending Studios</a></h1>
+            <form action="/products" method="get" class="header-search" role="search">
+                <label for="product-search" class="visually-hidden">Search products</label>
+                <input type="search" id="product-search" name="q" placeholder="Search products..."
+                    value="{{ searchQuery }}">
+                {% if currentCategory %}
+                <input type="hidden" name="category" value="{{ currentCategory }}">
+                {% endif %}
+                <button type="submit" class="main-button">Search</button>
+            </form>
             <div class="links">
                 {% if me %}
                 <a href="/account" data-test-id="profile-button"><img src="/account.svg" alt="Account"></a>

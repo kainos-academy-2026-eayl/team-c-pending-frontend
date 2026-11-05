@@ -22,10 +22,10 @@ const CustomerChanges = z.object({
 
 const ProductChanges = z.object({
     name: z.string().trim().min(1),
-    price: z.coerce.number().finite().nonnegative(),
+    price: z.string().trim().min(1, "Price is required").transform(Number).pipe(z.number().finite().nonnegative()),
     description: z.string().trim().min(1),
     category: z.string().trim().min(1),
-    quantity: z.coerce.number().int().nonnegative(),
+    quantity: z.string().trim().min(1, "Quantity is required").transform(Number).pipe(z.number().int().nonnegative()),
     image: z.string().transform((image) => image.trim() || null),
 });
 
@@ -171,7 +171,7 @@ router.get("/orders", async (req: Request, res: Response) => {
     });
 });
 
-router.get("/customer/:id/delete", (req: Request, res: Response) => {
+router.get(["/customer/:id/delete", "/customers/:id/delete"], (req: Request, res: Response) => {
     if (!requireAdmin(req, res)) return;
     const params = DeleteParams.safeParse(req.params);
     if (!params.success) return res.status(400).send("Invalid deletion request");
@@ -182,7 +182,7 @@ router.get("/customer/:id/delete", (req: Request, res: Response) => {
     });
 });
 
-router.post("/customer/:id/delete", async (req: Request, res: Response) => {
+router.post(["/customer/:id/delete", "/customers/:id/delete"], async (req: Request, res: Response) => {
     const token = requireAdmin(req, res);
     if (!token) return;
     const params = DeleteParams.safeParse(req.params);

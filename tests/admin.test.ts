@@ -234,8 +234,8 @@ describe("Admin sections", () => {
 			.toBeLessThan(response.text.indexOf("CustomerID: 10"));
 	});
 
-	it("confirms customer deletion without modifying data", async () => {
-		const response = await request(createApp()).get("/admin/customer/2/delete")
+	it.each(["customer", "customers"])("confirms %s deletion without modifying data", async (route) => {
+		const response = await request(createApp()).get(`/admin/${route}/2/delete`)
 			.query({ search: "Blue & Ada", category: "Home" })
 			.set("Cookie", "JWT_TOKEN=test-token").expect(200);
 		expect(response.text).toContain("Confirm deletion");
@@ -247,8 +247,8 @@ describe("Admin sections", () => {
 		expect(apiFetch).toHaveBeenCalledTimes(1);
 	});
 
-	it.each(["customers"])("deletes %s and preserves the customer search filter", async (section) => {
-		const response = await request(createApp()).post("/admin/customer/2/delete")
+	it.each(["customer", "customers"])("deletes via %s and preserves the customer search filter", async (route) => {
+		const response = await request(createApp()).post(`/admin/${route}/2/delete`)
 			.query({ search: "Blue & Ada", category: "Home" })
 			.set("Host", "localhost").set("Origin", "http://localhost")
 			.set("Cookie", "JWT_TOKEN=test-token").type("form")
@@ -259,7 +259,7 @@ describe("Admin sections", () => {
 		expect(target.searchParams.get("category")).toBeNull();
 		expect(target.searchParams.get("success")).toBe("Customer and their orders and basket deleted");
 		expect(apiFetch).toHaveBeenCalledTimes(2);
-		expect(apiFetch).toHaveBeenLastCalledWith(`http://api.example/${section}/2`, {
+		expect(apiFetch).toHaveBeenLastCalledWith("http://api.example/customers/2", {
 			method: "DELETE", headers: { Authorization: "Bearer test-token" },
 		});
 	});

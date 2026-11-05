@@ -63,6 +63,18 @@ p {
     margin-bottom: 10px;
 }
 
+.products-container>p[role="status"] {
+    color: white;
+}
+
+#search-status {
+    color: white;
+}
+
+#search-status:empty {
+    display: none;
+}
+
 .product-detail {
     max-width: 640px;
     margin-bottom: 32px;

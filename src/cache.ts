@@ -13,7 +13,7 @@ export default async function cache(name: string, fn: () => ReturnType<typeof fe
         const value = await fn();
         if (!value.ok) {
             // Return empty array for offline/error scenarios
-            const emptyData = [];
+            const emptyData: unknown[] = [];
             cacheMap.set(name, { value: emptyData, timestamp: Date.now(), ttl: 60_000 });
             return emptyData;
         }
@@ -22,7 +22,7 @@ export default async function cache(name: string, fn: () => ReturnType<typeof fe
         return jsonData;
     } catch (error) {
         // Handle network errors or JSON parse errors gracefully
-        const emptyData = [];
+        const emptyData: unknown[] = [];
         cacheMap.set(name, { value: emptyData, timestamp: Date.now(), ttl: 60_000 });
         return emptyData;
     }

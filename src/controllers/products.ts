@@ -6,16 +6,36 @@ import Product, { ProductWithReviews } from "../schemas/product.schema";
 const router = Router();
 
 export const productsController = async (req: Request, res: Response) => {
+    const parsedInput = z.object({
+        q: z.string().trim().optional(),
+        category: z.string().optional()
+    }).safeParse(req.query);
+    if (!parsedInput.success) {
+        return res.status(400).send("Invalid search or category");
+    }
+    const searchQuery = parsedInput.data.q ?? "";
+    const category = parsedInput.data.category;
+    let productErrorStatus: number | undefined;
+    const loadProducts = async (url: string) => {
+        const response = await fetch(url);
+        if (!response.ok) productErrorStatus = response.status;
+        return response;
+    };
     let productData;
-    if (req.query.category) {
-        const category = req.query.category.toString();
-        productData = await cache(`products-category-${category}`, () => fetch(`${process.env.API_ADDRESS}/products/category?category=${encodeURIComponent(category)}`));
+    if (category) {
+        productData = await cache(`products-category-${category}`, () => loadProducts(`${process.env.API_ADDRESS}/products/category?category=${encodeURIComponent(category)}`));
     } else {
-        productData = await cache(`products-all`, () => fetch(`${process.env.API_ADDRESS}/products`));
+        productData = await cache(`products-all`, () => loadProducts(`${process.env.API_ADDRESS}/products`));
+    }
+    if (productErrorStatus) {
+        return res.status(productErrorStatus).send("Unable to load products");
     }
     const productsParsed = z.array(Product).safeParse(productData);
     const products = productsParsed.success ? productsParsed.data : [];
-    const isHome = req.path === "/" && !req.query.category;
+    const searchTerm = searchQuery.toLowerCase();
+    const matchingProducts = products.filter(product =>
+        product.name.toLowerCase().includes(searchTerm) || product.description.toLowerCase().includes(searchTerm));
+    const isHome = req.path === "/" && !category && !searchQuery;
     let bestSellers: z.infer<typeof Product>[] = [];
     let bestSellersError = false;
     if (isHome) {
@@ -46,7 +66,7 @@ export const productsController = async (req: Request, res: Response) => {
     }
     const categoriesData = await cache(`categories-all`, () => fetch(`${process.env.API_ADDRESS}/products/categories`));
     const categories = Array.isArray(categoriesData) ? categoriesData : [];
-    res.render("products.njk", { nextBackURL: req.originalUrl, products: [...products].sort((a, b) => a.name.localeCompare(b.name)), bestSellers, bestSellersError, currentCategory: req.query.category, categories });
+    res.render("products.njk", { nextBackURL: req.originalUrl, products: matchingProducts.sort((a, b) => a.name.localeCompare(b.name)), bestSellers, bestSellersError, searchQuery, currentCategory: category, categories });
 };
 
 export const productController = async (req: Request, res: Response) => {

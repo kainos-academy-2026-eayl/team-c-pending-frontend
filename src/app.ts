@@ -82,7 +82,7 @@ export function createApp(): Express {
 		return num.toFixed(length || 2);
 	});
 
-	const asyncHandler = (fn: (req: express.Request, res: express.Response) => Promise<any>) => 
+	const asyncHandler = (fn: (req: express.Request, res: express.Response) => Promise<any>) =>
 		(req: express.Request, res: express.Response, next: express.NextFunction) => Promise.resolve(fn(req, res)).catch(next);
 
 	app.get("/health", healthController);
