@@ -183,25 +183,25 @@ router.get("/:section/:id/delete", (req: Request, res: Response) => {
     });
 });
 
-router.post("/:section/:id/delete", async (req: Request, res: Response) => {
+router.post("/:customer/:id/delete", async (req: Request, res: Response) => {
     const token = requireAdmin(req, res);
     if (!token) return;
     const params = DeleteParams.safeParse(req.params);
     if (!params.success) return res.status(400).send("Invalid deletion request");
-    const { section, id } = params.data;
+    const { id } = params.data;
     if (req.body.confirm !== "delete") {
-        return redirectToSection(req, res, section, "error", "Deletion must be confirmed");
+        return redirectToSection(req, res, "customers", "error", "Deletion must be confirmed");
     }
 
-    const response = await fetch(`${process.env.API_ADDRESS}/${section}/${id}`, {
+    const response = await fetch(`${process.env.API_ADDRESS}/customers/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) {
         const error = z.object({ error: z.string() }).parse(await response.json());
-        return redirectToSection(req, res, section, "error", error.error);
+        return redirectToSection(req, res, "customers", "error", error.error);
     }
-    return redirectToSection(req, res, section, "success",
+    return redirectToSection(req, res, "customers", "success",
         "Customer and their orders and basket deleted");
 });
 
