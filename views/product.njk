@@ -7,11 +7,12 @@
 <main>
     <div class="horizontal">
         <div class="margin-auto">
-            <img class="product-image" src="{{ product.image }}" alt="{{ product.name }}">
+            <img class="product-image" src="{{backendUrl}}{{ product.image }}" alt="{{ product.name }}">
         </div>
         <div class="product-description">
             <h1>{{ product.name }}</h1>
-            <div class="stars" role="img" aria-label="{% if product.reviews.length %}Average rating: {{ stars }} out of 5 ({{ product.reviews.length }} reviews){% else %}No reviews yet{% endif %}">
+            <div class="stars" role="img"
+                aria-label="{% if product.reviews.length %}Average rating: {{ stars }} out of 5 ({{ product.reviews.length }} reviews){% else %}No reviews yet{% endif %}">
                 {% if stars >= 1 %}
                 <img src="/star_full.svg" alt="Star">
                 {% else %}

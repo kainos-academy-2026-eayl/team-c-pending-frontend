@@ -16,7 +16,7 @@
     {% for product in products %}
     <div class="product" data-test-id="product">
         <div>
-            <img src="{{ product.image }}" alt="{{ product.name }}">
+            <img src="{{backendUrl}}{{ product.image }}" alt="{{ product.name }}">
             <a href="/products/{{ product.productID }}">
                 <h2 data-test-id="product-name">{{ product.name }}</h2>
             </a>

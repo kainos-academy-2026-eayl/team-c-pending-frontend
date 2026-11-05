@@ -14,7 +14,7 @@ router.get("/", async (req: Request, res: Response) => {
         productData = await fetch(`${process.env.API_ADDRESS}/products`);
     }
     const products = z.array(Product).parse(await productData.json()).sort((a, b) => a.name.localeCompare(b.name));
-    res.render("products.njk", { nextBackURL: req.originalUrl, products, currentCategory: req.query.category, categories: await cache(`categories-all`, () => fetch(`${process.env.API_ADDRESS}/products/categories`)) });
+    res.render("products.njk", { backendUrl: process.env.API_ADDRESS, nextBackURL: req.originalUrl, products, currentCategory: req.query.category, categories: await cache(`categories-all`, () => fetch(`${process.env.API_ADDRESS}/products/categories`)) });
 });
 
 router.get("/:id", async (req: Request, res: Response) => {
@@ -24,8 +24,8 @@ router.get("/:id", async (req: Request, res: Response) => {
         return res.status(productData.status).send(productData.status === 404 ? "Product not found" : "Unable to load product");
     }
     const product = ProductWithReviews.parse(await productData.json());
-    const stars = Math.round(product.reviews.reduce((acc, review) => acc + review.rating, 0)/product.reviews.length);
-    res.render("product.njk", { product, stars });
+    const stars = Math.round(product.reviews.reduce((acc, review) => acc + review.rating, 0) / product.reviews.length);
+    res.render("product.njk", { backendUrl: process.env.API_ADDRESS, product, stars });
 });
 
 router.get("/:id/add_review", async (req: Request, res: Response) => {
@@ -39,7 +39,7 @@ router.get("/:id/add_review", async (req: Request, res: Response) => {
 });
 
 router.get("/:id/add_review_message", async (req: Request, res: Response) => {
-        if (!res.locals.me) {
+    if (!res.locals.me) {
         return res.redirect("/login");
     }
     const id = req.params.id as string;
@@ -49,7 +49,7 @@ router.get("/:id/add_review_message", async (req: Request, res: Response) => {
 });
 
 router.post("/:id/add_review", async (req: Request, res: Response) => {
-        if (!res.locals.me) {
+    if (!res.locals.me) {
         return res.redirect("/login");
     }
     const parsedInput = z.object({
