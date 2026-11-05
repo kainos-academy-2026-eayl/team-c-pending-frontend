@@ -13,7 +13,8 @@ export const productsController = async (req: Request, res: Response) => {
     } else {
         productData = await cache(`products-all`, () => fetch(`${process.env.API_ADDRESS}/products`));
     }
-    const products = z.array(Product).parse(productData);
+    const productsParsed = z.array(Product).safeParse(productData);
+    const products = productsParsed.success ? productsParsed.data : [];
     const isHome = req.path === "/" && !req.query.category;
     let bestSellers: z.infer<typeof Product>[] = [];
     let bestSellersError = false;
@@ -43,7 +44,9 @@ export const productsController = async (req: Request, res: Response) => {
             bestSellersError = true;
         }
     }
-    res.render("products.njk", { nextBackURL: req.originalUrl, products: [...products].sort((a, b) => a.name.localeCompare(b.name)), bestSellers, bestSellersError, currentCategory: req.query.category, categories: await cache(`categories-all`, () => fetch(`${process.env.API_ADDRESS}/products/categories`)) });
+    const categoriesData = await cache(`categories-all`, () => fetch(`${process.env.API_ADDRESS}/products/categories`));
+    const categories = Array.isArray(categoriesData) ? categoriesData : [];
+    res.render("products.njk", { nextBackURL: req.originalUrl, products: [...products].sort((a, b) => a.name.localeCompare(b.name)), bestSellers, bestSellersError, currentCategory: req.query.category, categories });
 };
 
 export const productController = async (req: Request, res: Response) => {
