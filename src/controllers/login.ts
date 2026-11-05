@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import { Router } from "express";
 import z from "zod";
 import ErrorSchema from "../schemas/error.schema";
+import User from "../schemas/user.schema";
 import ValidationError from "../schemas/validation-error.schema";
 
 const router = Router();
@@ -50,8 +51,18 @@ router.post("/", async (req: Request, res: Response) => {
 
 	const data = ResponseFormat.parse(await response.json());
 
+	const userResponse = await fetch(`${process.env.API_ADDRESS}/me`, {
+		headers: {
+			Authorization: `Bearer ${data.accessToken}`,
+		},
+	});
+	if (!userResponse.ok) {
+		return res.status(userResponse.status).send("Login failed");
+	}
+
+	const user = User.parse(await userResponse.json());
 	res.cookie("JWT_TOKEN", data.accessToken, { httpOnly: true });
 
-	res.redirect("/");
+	res.redirect(user.role === "admin" ? "/admin" : "/");
 });
 export default router;

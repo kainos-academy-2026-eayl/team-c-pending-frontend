@@ -1,6 +1,22 @@
 import request from "supertest";
 import { describe, expect, it } from "vitest";
 import { createApp } from "../src/app";
+import User from "../src/schemas/user.schema";
+
+describe("User role parsing", () => {
+	it("normalizes admin roles regardless of capitalization", () => {
+		const user = User.parse({
+			firstName: "Ada",
+			lastName: "Lovelace",
+			customerId: 1,
+			email: "ada@example.com",
+			role: "Admin",
+			basketCount: 0,
+		});
+
+		expect(user.role).toBe("admin");
+	});
+});
 
 describe("GET /health", () => {
 	it("returns 200 and health status", async () => {
@@ -17,6 +33,15 @@ describe("GET /health", () => {
 
 			expect(response.text).toContain("Your order is confirmed");
 		});
+	});
+});
+
+describe("Unmatched routes", () => {
+	it.each(["get", "post"] as const)("returns 404 for an unknown %s route", async (method) => {
+		await request(createApp())[method]("/unknown")
+			.set("Host", "localhost")
+			.set("Origin", "http://localhost")
+			.expect(404);
 	});
 });
 

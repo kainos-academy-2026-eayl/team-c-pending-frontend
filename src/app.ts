@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 import express, { type Express } from "express";
 import nunjucks from "nunjucks";
 import { accountController } from "./controllers/account";
+import adminController from "./controllers/admin";
 import basketController from "./controllers/basket";
 import checkoutController from "./controllers/checkout";
 import { confirmationController } from "./controllers/confirmation";
@@ -107,12 +108,20 @@ export function createApp(): Express {
 
 	app.use(express.static("public"));
 	app.get("/account", accountController);
+	app.use("/admin", adminController);
 	app.post("/logout", logoutController);
 
-	app.use((err: Error, _req: express.Request, res: express.Response) => {
-		console.error("Unhandled error:", err);
-		res.status(500).render("error.njk", { error: err.message });
-	});
+	app.use(
+		(
+			err: Error,
+			_req: express.Request,
+			res: express.Response,
+			_next: express.NextFunction,
+		) => {
+			console.error("Unhandled error:", err);
+			res.status(500).render("error.njk", { error: err.message });
+		},
+	);
 
 	return app;
 }
