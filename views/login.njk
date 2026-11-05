@@ -15,7 +15,7 @@
             <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password:</label>
             <div class="flex items-start gap-2">
                 <input type="{% if passwordVisible %}text{% else %}password{% endif %}" data-test-id="password" id="password" name="password" value="{{ password or '' }}" class="flex-1 px-3 py-2 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-600">
-                <button class="flex-shrink-0 px-4 py-2 bg-amber-700 text-white rounded-md hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-600" type="button" data-test-id="show-password" name="passwordVisibility"
+                <button class="flex-shrink-0 px-4 py-2 bg-amber-700 text-white rounded-md hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-600" type="submit" data-test-id="show-password" name="passwordVisibility"
                     value="{% if passwordVisible %}hide{% else %}show{% endif %}" aria-controls="password"
                     aria-pressed="{% if passwordVisible %}true{% else %}false{% endif %}">{% if passwordVisible %}Hide{% else %}Show{% endif %}</button>
             </div>
