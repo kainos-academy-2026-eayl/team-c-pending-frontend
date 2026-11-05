@@ -26,6 +26,15 @@ describe("GET /health", () => {
 	});
 });
 
+describe("Unmatched routes", () => {
+	it.each(["get", "post"] as const)("returns 404 for an unknown %s route", async (method) => {
+		await request(createApp())[method]("/unknown")
+			.set("Host", "localhost")
+			.set("Origin", "http://localhost")
+			.expect(404);
+	});
+});
+
 describe("CSRF protection", () => {
 	it("rejects state-changing requests without a same-origin Origin header", async () => {
 		await request(createApp())
