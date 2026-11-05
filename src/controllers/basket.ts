@@ -41,8 +41,6 @@ router.post("/", async (req, res) => {
         newQuantity = quantity;
     }
 
-    console.log(`Updating product ${productID} to quantity ${newQuantity}`);
-
     const apiRes = await fetch(`${process.env.API_ADDRESS}/basket/${productID}`, {
         method: "POST",
         headers: { "Authorization": `Bearer ${req.cookies.JWT_TOKEN}`, "Content-Type": "application/json" },

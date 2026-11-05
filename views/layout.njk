@@ -16,6 +16,7 @@
             <div class="links">
                 {% if me %}
                 <a href="/account" data-test-id="profile-button"><img src="/account.svg" alt="Account"></a>
+                {% if me.role == "admin" %}<a href="/admin">Admin portal</a>{% endif %}
                 <a href="/basket"><img src="/basket.svg" alt="Basket">{% if me.basketCount != 0 %}<span
                         class="basket-count">{{ me.basketCount }}</span>{% endif %}</a>
                 {% else %}

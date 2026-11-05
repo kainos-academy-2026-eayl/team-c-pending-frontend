@@ -10,6 +10,7 @@ import checkoutController from "./controllers/checkout";
 import loginController from "./controllers/login";
 import { logoutController } from "./controllers/logout";
 import { accountController } from "./controllers/account";
+import adminController from "./controllers/admin";
 import bodyParser from "body-parser";
 import "dotenv/config";
 import User from "./schemas/user.schema";
@@ -102,9 +103,10 @@ export function createApp(): Express {
 
 	app.use(express.static("public"));
 	app.get("/account", accountController);
+	app.use("/admin", adminController);
 	app.post("/logout", logoutController);
 
-	app.use((err: Error, _req: express.Request, res: express.Response) => {
+	app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
 		console.error("Unhandled error:", err);
 		res.status(500).render("error.njk", { error: err.message });
 	});
