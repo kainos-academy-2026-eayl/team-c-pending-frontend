@@ -1,5 +1,5 @@
-import type { Response } from "express";
+import type { Request, Response } from "express";
 
-export const confirmationController = (_req: unknown, res: Response) => {
+export const confirmationController = (_req: Request, res: Response) => {
     res.render("confirmation.njk");
 };

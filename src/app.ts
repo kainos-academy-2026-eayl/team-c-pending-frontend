@@ -106,7 +106,7 @@ export function createApp(): Express {
 	app.use("/admin", adminController);
 	app.post("/logout", logoutController);
 
-	app.use((err: Error, _req: express.Request, res: express.Response) => {
+	app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
 		console.error("Unhandled error:", err);
 		res.status(500).render("error.njk", { error: err.message });
 	});
