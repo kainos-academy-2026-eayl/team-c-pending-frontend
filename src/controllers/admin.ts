@@ -22,10 +22,10 @@ const CustomerChanges = z.object({
 
 const ProductChanges = z.object({
     name: z.string().trim().min(1),
-    price: z.coerce.number().finite().nonnegative(),
+    price: z.string().trim().min(1, "Price is required").transform(Number).pipe(z.number().finite().nonnegative()),
     description: z.string().trim().min(1),
     category: z.string().trim().min(1),
-    quantity: z.coerce.number().int().nonnegative(),
+    quantity: z.string().trim().min(1, "Quantity is required").transform(Number).pipe(z.number().int().nonnegative()),
     image: z.string().transform((image) => image.trim() || null),
 });
 
