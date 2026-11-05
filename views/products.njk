@@ -1,17 +1,19 @@
 {% extends "layout.njk" %}
 {% block head %}
 <link rel="stylesheet" type="text/css" href="/products.css">
+<script src="/search.js" defer></script>
 {% endblock %}
 {% block title %}Products Page{% endblock %}
 {% block header %}Products Page{% endblock %}
 {% block content %}
 <div class="categories-container">
-    <a href="/products" {% if currentCategory==null %}class="active" {% endif %}>All</a>
+    <a href="/products?q={{ searchQuery | urlencode }}" {% if not currentCategory %}class="active" {% endif %}>All</a>
     {% for category in categories %}
-    <a href="/products?category={{ category }}" {% if currentCategory==category %}class="active" {% endif %}>{{ category
+    <a href="/products?category={{ category | urlencode }}&amp;q={{ searchQuery | urlencode }}" {% if currentCategory==category %}class="active" {% endif %}>{{ category
         }}</a>
     {% endfor %}
 </div>
+<p id="search-status" role="status" aria-live="polite"></p>
 <div class="products-container">
     {% for product in products %}
     <div class="product" data-test-id="product">
@@ -39,6 +41,8 @@
         </form>
     </div>
 
+    {% else %}
+    <p role="status">No products match your search.</p>
     {% endfor %}
 </div>
 {% endblock %}

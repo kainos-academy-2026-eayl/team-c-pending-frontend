@@ -62,3 +62,15 @@ p {
     font-size: 1em;
     margin-bottom: 10px;
 }
+
+.products-container>p[role="status"] {
+    color: white;
+}
+
+#search-status {
+    color: white;
+}
+
+#search-status:empty {
+    display: none;
+}

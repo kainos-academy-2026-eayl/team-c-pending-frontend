@@ -6,15 +6,29 @@ import Product, { ProductWithReviews } from "../schemas/product.schema";
 const router = Router();
 
 router.get("/", async (req: Request, res: Response) => {
+    const parsedInput = z.object({
+        q: z.string().trim().optional(),
+        category: z.string().optional()
+    }).safeParse(req.query);
+    if (!parsedInput.success) {
+        return res.status(400).send("Invalid search or category");
+    }
+    const searchQuery = parsedInput.data.q ?? "";
+    const category = parsedInput.data.category;
     let productData: globalThis.Response;
-    if (req.query.category) {
-        const category = req.query.category.toString();
+    if (category) {
         productData = await fetch(`${process.env.API_ADDRESS}/products/category?category=${encodeURIComponent(category)}`);
     } else {
         productData = await fetch(`${process.env.API_ADDRESS}/products`);
     }
-    const products = z.array(Product).parse(await productData.json()).sort((a, b) => a.name.localeCompare(b.name));
-    res.render("products.njk", { nextBackURL: req.originalUrl, products, currentCategory: req.query.category, categories: await cache(`categories-all`, () => fetch(`${process.env.API_ADDRESS}/products/categories`)) });
+    if (!productData.ok) {
+        return res.status(productData.status).send("Unable to load products");
+    }
+    const searchTerm = searchQuery.toLowerCase();
+    const products = z.array(Product).parse(await productData.json())
+        .filter(product => product.name.toLowerCase().includes(searchTerm) || product.description.toLowerCase().includes(searchTerm))
+        .sort((a, b) => a.name.localeCompare(b.name));
+    res.render("products.njk", { nextBackURL: req.originalUrl, products, searchQuery, currentCategory: category, categories: await cache(`categories-all`, () => fetch(`${process.env.API_ADDRESS}/products/categories`)) });
 });
 
 router.get("/:id", async (req: Request, res: Response) => {
