@@ -135,8 +135,10 @@ describe("Admin sections", () => {
 		apiFetch.mockResolvedValueOnce(Response.json(user))
 			.mockResolvedValueOnce(Response.json([
 				{ ...order, orderID: 3, date: "2026-11-03T10:00:00.000Z", status: "completed" },
-				{ ...order, orderID: 2, date: "2026-11-02T10:00:00.000Z", status: "pending",
-					customer: { firstName: "Grace", lastName: "Hopper" } },
+				{
+					...order, orderID: 2, date: "2026-11-02T10:00:00.000Z", status: "pending",
+					customer: { firstName: "Grace", lastName: "Hopper" }
+				},
 				{ ...order, orderID: 1, date: "2026-11-04T10:00:00.000Z", status: "pending" },
 			]));
 		const response = await request(createApp()).get(`/admin/orders${query}`)
@@ -312,7 +314,6 @@ describe("Admin sections", () => {
 		expect(productBoxes[1]![1]).toContain("ProductID: 10");
 		expect(productBoxes[1]![1]).toContain('/admin/products/10/visibility?');
 		expect(productBoxes[1]![1]).toContain('name="hide" value="false"');
-	});
 	});
 
 	it("shows add/delete visibility controls inside each product box", async () => {
