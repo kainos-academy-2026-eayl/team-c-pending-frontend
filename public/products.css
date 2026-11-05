@@ -64,3 +64,213 @@ p {
     font-size: 1em;
     margin-bottom: 10px;
 }
+
+.product-detail {
+    max-width: 640px;
+    margin-bottom: 32px;
+}
+
+.product-detail a {
+    color: white;
+}
+
+.product-detail-image {
+    display: block;
+    width: 320px;
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: contain;
+    margin: 20px auto;
+    border-radius: 10px;
+}
+
+.best-sellers,
+.best-sellers-error {
+    box-sizing: border-box;
+    width: calc(100% - 32px);
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px) brightness(75%);
+    color: white;
+}
+
+.best-sellers {
+    max-width: 680px;
+    margin: 16px auto;
+    padding: 8px 12px;
+}
+
+.best-sellers-error {
+    margin: 20px auto;
+    padding: 16px;
+    max-width: 920px;
+}
+
+.best-sellers-error a {
+    color: white;
+}
+
+.best-sellers-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.best-sellers-heading h2 {
+    margin: 0;
+    font-size: 1rem;
+    text-align: left;
+}
+
+.globe-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.globe-toggle,
+.globe-navigation button {
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background: transparent;
+    color: white;
+    min-width: 32px;
+    min-height: 32px;
+    padding: 4px 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.75rem;
+}
+
+.globe-toggle:hover,
+.globe-navigation button:hover,
+.globe-toggle[aria-pressed="true"] {
+    background-color: #2e7d3283;
+}
+
+.globe-toggle:not([hidden]) {
+    display: grid;
+    place-items: center;
+    padding: 4px;
+}
+
+.globe-toggle[aria-pressed="false"] .carousel-play-icon,
+.globe-toggle[aria-pressed="true"] .carousel-pause-icon {
+    display: none;
+}
+
+.product-globe {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 16px;
+    list-style: none;
+    padding: 12px 0;
+    margin: 0 auto;
+    max-width: 760px;
+}
+
+.product-globe.is-animated {
+    display: block;
+    position: relative;
+    height: 168px;
+    padding: 0;
+    isolation: isolate;
+    overflow: clip;
+}
+
+.is-animated .globe-item {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 136px;
+    will-change: transform;
+    transition: transform 600ms ease, visibility 0s;
+}
+
+.globe-product {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    box-sizing: border-box;
+    padding: 8px;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+    backdrop-filter: blur(10px) brightness(75%);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.globe-product img,
+.globe-image-placeholder {
+    width: 72px;
+    height: 72px;
+    box-sizing: border-box;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.globe-image-placeholder:not([hidden]) {
+    display: grid;
+    place-items: center;
+    background: rgba(255, 255, 255, 0.334);
+    color: white;
+    font-size: 0.8rem;
+}
+
+.globe-product-name {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    font-size: 0.85rem;
+    line-height: 1.2;
+}
+
+.is-animated .globe-product-name {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.globe-product-price {
+    color: white;
+    font-size: 0.85rem;
+}
+
+.globe-navigation:not([hidden]) {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+}
+
+.globe-product:focus-visible,
+.globe-toggle:focus-visible,
+.globe-navigation button:focus-visible {
+    outline: 3px solid #b4e8bd;
+    outline-offset: 3px;
+}
+
+@media (max-width: 480px) {
+    .best-sellers {
+        padding-inline: 16px;
+    }
+
+    .product-globe.is-animated {
+        height: 168px;
+    }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .globe-item {
+        transition: none;
+    }
+}

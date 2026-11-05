@@ -2,9 +2,11 @@
 {% block head %}
 <link rel="stylesheet" href="/product.css">
 {% endblock %}
-{% block title %}{{ product.name }}{% endblock %}
+{% block title %}{% if product %}{{ product.name }}{% else %}Product not found{% endif %} | Pending Studios{% endblock %}
 {% block content %}
 <main>
+    <a href="/products">Back to all products</a>
+    {% if product %}
     <div class="horizontal">
         <div class="margin-auto">
             <img class="product-image" src="{{backendUrl}}{{ product.image }}" alt="{{ product.name }}">
@@ -41,6 +43,7 @@
                 ({{ product.reviews.length }})
             </div>
             <p>{{ product.description }}</p>
+            <p>Category: <a href="/products?category={{ product.category | urlencode }}">{{ product.category }}</a></p>
             <form action="/basket" method="post" class="add-to-basket-form">
                 <span>£{{ product.price | pounds }}</span>
                 <input type="number" name="productID" hidden value="{{product.productID}}">
@@ -109,5 +112,9 @@
 
         </div>
     </div>
+    {% else %}
+    <h2>Product not found</h2>
+    <p>This product is no longer available. Browse the catalogue to find something else.</p>
+    {% endif %}
 </main>
 {% endblock %}
