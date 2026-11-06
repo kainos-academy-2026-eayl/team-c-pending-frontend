@@ -104,13 +104,15 @@ describe("Admin sections", () => {
 			.mockResolvedValueOnce(Response.json([order, { ...order, orderID: 2, customerID: 99, date: "2026-11-03T10:00:00.000Z" }]));
 		const response = await request(createApp()).get("/admin/orders")
 			.set("Cookie", "JWT_TOKEN=test-token").expect(200);
-		expect(response.text).toContain("Customer ID: 42");
-		expect(response.text).toContain("Customer ID: 99");
+		expect(response.text).not.toContain("Customer ID:");
+		expect(response.text).not.toContain("Order ID:");
+		expect(response.text).not.toContain("<th scope=\"col\">Product ID</th>");
 		expect(response.text).toContain("Customer: Ada Lovelace");
 		expect(response.text).toContain("Apple");
 		expect(response.text).toContain("Total: £3.75");
 		expect(response.text).toContain("04/11/2026, 10:00:00");
-		expect(response.text.indexOf("Order ID: 1")).toBeLessThan(response.text.indexOf("Order ID: 2"));
+		expect([...response.text.matchAll(/<time datetime="([^"]+)"/g)].map((match) => match[1]))
+			.toEqual(["2026-11-04T10:00:00.000Z", "2026-11-03T10:00:00.000Z"]);
 		expect(response.text).not.toContain('method="post"');
 		expect(apiFetch).toHaveBeenLastCalledWith("http://api.example/orders/admin", {
 			headers: { Authorization: "Bearer test-token" },
@@ -143,9 +145,15 @@ describe("Admin sections", () => {
 			]));
 		const response = await request(createApp()).get(`/admin/orders${query}`)
 			.set("Cookie", "JWT_TOKEN=test-token").expect(200);
-		const actualIDs = [...response.text.matchAll(/<h3>Order ID: (\d+)<\/h3>/g)]
-			.map((match) => Number(match[1]));
-		expect(actualIDs).toEqual(expectedIDs);
+		const datesByID: Record<number, string> = {
+			1: "2026-11-04T10:00:00.000Z",
+			2: "2026-11-02T10:00:00.000Z",
+			3: "2026-11-03T10:00:00.000Z",
+		};
+		const actualDates = [...response.text.matchAll(/<time datetime="([^"]+)"/g)]
+			.map((match) => match[1]);
+		expect(actualDates).toEqual(expectedIDs.map((id) => datesByID[id]));
+		if (expectedIDs.length) expect(response.text).toContain('<td colspan="5">No items in this order.</td>');
 		expect(response.text).toContain(`${expectedIDs.length} order(s) found.`);
 		expect(response.text).toContain('value="completed"');
 		expect(response.text).toContain('value="pending"');
@@ -230,8 +238,9 @@ describe("Admin sections", () => {
 		const response = await request(createApp()).get("/admin/customers")
 			.set("Cookie", "JWT_TOKEN=test-token").expect(200);
 
-		expect(response.text.indexOf("CustomerID: 2"))
-			.toBeLessThan(response.text.indexOf("CustomerID: 10"));
+		expect([...response.text.matchAll(/action="\/admin\/customers\/(\d+)\?/g)].map((match) => Number(match[1])))
+			.toEqual([2, 10]);
+		expect(response.text).not.toContain("CustomerID:");
 	});
 
 	it.each(["customer", "customers"])("confirms %s deletion without modifying data", async (route) => {
@@ -308,10 +317,10 @@ describe("Admin sections", () => {
 			.set("Cookie", "JWT_TOKEN=test-token").expect(200);
 		const productBoxes = [...response.text.matchAll(/<fieldset>([\s\S]*?)<\/fieldset>/g)];
 		expect(productBoxes).toHaveLength(2);
-		expect(productBoxes[0]![1]).toContain("ProductID: 2");
+		expect(productBoxes[0]![1]).toContain('value="Blue mug"');
 		expect(productBoxes[0]![1]).toContain('/admin/products/2/visibility?');
 		expect(productBoxes[0]![1]).toContain('name="hide" value="true"');
-		expect(productBoxes[1]![1]).toContain("ProductID: 10");
+		expect(productBoxes[1]![1]).toContain('value="Blue shirt"');
 		expect(productBoxes[1]![1]).toContain('/admin/products/10/visibility?');
 		expect(productBoxes[1]![1]).toContain('name="hide" value="false"');
 	});
@@ -331,7 +340,9 @@ describe("Admin sections", () => {
 		expect(productBoxes).toHaveLength(products.length);
 		for (const [index, box] of productBoxes.entries()) {
 			const content = box[1]!;
-			expect(content).toContain(`ProductID: ${products[index]!.productID}`);
+			expect(content).not.toContain("ProductID:");
+			expect(content).toContain(`value="${products[index]!.name}"`);
+			expect(content).toContain(`/admin/products/${products[index]!.productID}?`);
 			expect(content).toContain("Save product");
 			expect(content).toContain(`/admin/products/${products[index]!.productID}/visibility?`);
 			expect(content).toContain(products[index]!.hide ? "Add product" : "Delete product");
