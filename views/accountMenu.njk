@@ -8,7 +8,6 @@
 <main>
 
     <h2>Account details</h2>
-    <p>Customer ID: {{ customerId }}</p>
     <p>Name: {{ firstName }} {{ lastName }}</p>
     <p>Email: {{ email }}</p>
 
@@ -16,7 +15,6 @@
     <div class="orders-container">
         {% for order in orders %}
         <div class="order">
-            <h3>Order ID: {{ order.orderID }}</h3>
             <p>Price: £{{ order.price | pounds }}</p>
             <p>Items:
             <table>
