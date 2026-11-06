@@ -1,119 +1,80 @@
 {% extends "layout.njk" %}
-{% block head %}
-<link rel="stylesheet" href="/product.css">
-{% endblock %}
 {% block title %}{% if product %}{{ product.name }}{% else %}Product not found{% endif %} | Pending Studios{% endblock %}
 {% block content %}
-<main>
-    <a href="/products">Back to all products</a>
+<main class="max-w-4xl mx-auto px-4 py-8">
+    <a href="/products" class="inline-flex items-center text-amber-700 hover:text-amber-600 mb-6">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+        Back to all products
+    </a>
     {% if product %}
-    <div class="horizontal">
-        <div class="margin-auto">
-            <img class="product-image" src="{{ product.image }}" alt="{{ product.name }}">
+    <div class="grid md:grid-cols-2 gap-8 mb-8">
+        <div class="flex justify-center">
+            <img class="max-w-sm w-full h-auto rounded-lg object-contain" src="{{backendUrl}}{{ product.image }}" alt="{{ product.name }}">
         </div>
-        <div class="product-description">
-            <h1>{{ product.name }}</h1>
-            <div class="stars" role="img" aria-label="{% if product.reviews.length %}Average rating: {{ stars }} out of 5 ({{ product.reviews.length }} reviews){% else %}No reviews yet{% endif %}">
-                {% if stars >= 1 %}
-                <img src="/star_full.svg" alt="Star">
+        <div class="flex flex-col">
+            <h1 class="text-3xl font-bold text-gray-900 mb-4">{{ product.name }}</h1>
+            <div class="flex items-center gap-2 mb-4" role="img"
+                aria-label="{% if product.reviews.length %}Average rating: {{ stars }} out of 5 ({{ product.reviews.length }} reviews){% else %}No reviews yet{% endif %}">
+                {% for i in range(5) %}
+                {% if stars >= i + 1 %}
+                <img src="/star_full.svg" alt="Star" class="w-5 h-5">
                 {% else %}
-                <img src="/star_empty.svg" alt="Star">
+                <img src="/star_empty.svg" alt="Star" class="w-5 h-5">
                 {% endif %}
-                {% if stars >= 2 %}
-                <img src="/star_full.svg" alt="Star">
-                {% else %}
-                <img src="/star_empty.svg" alt="Star">
-                {% endif %}
-                {% if stars >= 3 %}
-                <img src="/star_full.svg" alt="Star">
-                {% else %}
-                <img src="/star_empty.svg" alt="Star">
-                {% endif %}
-                {% if stars >= 4 %}
-                <img src="/star_full.svg" alt="Star">
-                {% else %}
-                <img src="/star_empty.svg" alt="Star">
-                {% endif %}
-                {% if stars >= 5 %}
-                <img src="/star_full.svg" alt="Star">
-                {% else %}
-                <img src="/star_empty.svg" alt="Star">
-                {% endif %}
-                ({{ product.reviews.length }})
+                {% endfor %}
+                <span class="text-sm text-gray-600">({{ product.reviews.length }})</span>
             </div>
-            <p>{{ product.description }}</p>
-            <p>Category: <a href="/products?category={{ product.category | urlencode }}">{{ product.category }}</a></p>
-            <form action="/basket" method="post" class="add-to-basket-form">
-                <span>£{{ product.price | pounds }}</span>
+            <p class="text-gray-700 mb-4">{{ product.description }}</p>
+            <p class="text-sm text-gray-600 mb-6">Category: <a href="/products?category={{ product.category | urlencode }}" class="text-amber-700 hover:text-amber-600">{{ product.category }}</a></p>
+            <form action="/basket" method="post" class="flex items-center gap-4 p-4 bg-gray-50 rounded-lg mb-8">
+                <span class="text-2xl font-bold text-gray-900">£{{ product.price | pounds }}</span>
                 <input type="number" name="productID" hidden value="{{product.productID}}">
                 <input type="number" name="quantity" hidden value="1">
                 <input type="text" name="quantityMode" hidden value="relative">
                 {% if product.quantity <= 0 %}
-                <button type="submit" data-test-id="add-to-basket-button" class="main-button disabled-button"
-                    disabled>Out of stock</button>
+                <button type="submit" data-test-id="add-to-basket-button" class="px-6 py-3 bg-gray-300 text-gray-600 rounded-md cursor-not-allowed pointer-events-none" disabled>Out of stock</button>
                 {% else %}
-                <button type="submit" data-test-id="add-to-basket-button" class="main-button" type="button">Add to
-                    Basket</button>
+                <button type="submit" data-test-id="add-to-basket-button" class="px-6 py-3 bg-amber-700 text-white rounded-md hover:bg-amber-600">Add to Basket</button>
                 {% endif %}
             </form>
 
-            <h2>Reviews</h2>
-            <div class="review-form">
-                Leave a review:
-                <div class="stars">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Reviews</h2>
+            <div class="bg-gray-50 p-4 rounded-lg mb-6 flex items-center gap-4">
+                <span class="text-gray-700">Leave a review:</span>
+                <div class="flex gap-2">
                     {% for i in range(5) %}
                     <a data-test-id="add-review-link-{{i}}" aria-label="Rate {{ i + 1 }} out of 5 stars"
-                        href="/products/{{product.productID}}/add_review?rating={{ i + 1 }}"><img src="/star_empty.svg"
-                            alt=""></a>
+                        href="/products/{{product.productID}}/add_review?rating={{ i + 1 }}" class="hover:scale-110 transition-transform">
+                        <img src="/star_empty.svg" alt="" class="w-6 h-6">
+                    </a>
                     {% endfor %}
                 </div>
             </div>
-            <br>
 
-            <div class="reviews">
+            <div class="space-y-4">
                 {% for review in product.reviews %}
-                <div class="review" data-test-id="review">
-                    <div class="space-between">
-                        <div class="stars">
-                            {% if review.rating >= 1 %}
-                            <img src="/star_full.svg" alt="Star">
+                <div class="bg-white border border-gray-200 p-4 rounded-lg" data-test-id="review">
+                    <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
+                        <div class="flex gap-1">
+                            {% for i in range(5) %}
+                            {% if review.rating >= i + 1 %}
+                            <img src="/star_full.svg" alt="Star" class="w-4 h-4">
                             {% else %}
-                            <img src="/star_empty.svg" alt="Star">
+                            <img src="/star_empty.svg" alt="Star" class="w-4 h-4">
                             {% endif %}
-                            {% if review.rating >= 2 %}
-                            <img src="/star_full.svg" alt="Star">
-                            {% else %}
-                            <img src="/star_empty.svg" alt="Star">
-                            {% endif %}
-                            {% if review.rating >= 3 %}
-                            <img src="/star_full.svg" alt="Star">
-                            {% else %}
-                            <img src="/star_empty.svg" alt="Star">
-                            {% endif %}
-                            {% if review.rating >= 4 %}
-                            <img src="/star_full.svg" alt="Star">
-                            {% else %}
-                            <img src="/star_empty.svg" alt="Star">
-                            {% endif %}
-                            {% if review.rating >= 5 %}
-                            <img src="/star_full.svg" alt="Star">
-                            {% else %}
-                            <img src="/star_empty.svg" alt="Star">
-                            {% endif %}
+                            {% endfor %}
                         </div>
-                        <div data-test-id="review-author">{{ review.customer.firstName }} {{ review.customer.lastName }}
-                        </div>
+                        <div data-test-id="review-author" class="text-sm font-medium text-gray-900">{{ review.customer.firstName }} {{ review.customer.lastName }}</div>
                     </div>
-                    <p data-test-id="review-comment">{{ review.comment }}</p>
+                    <p data-test-id="review-comment" class="text-gray-700">{{ review.comment }}</p>
                 </div>
                 {% endfor %}
             </div>
-
         </div>
     </div>
     {% else %}
-    <h2>Product not found</h2>
-    <p>This product is no longer available. Browse the catalogue to find something else.</p>
+    <h2 class="text-2xl font-bold text-gray-900 mb-4">Product not found</h2>
+    <p class="text-gray-600">This product is no longer available. Browse the catalogue to find something else.</p>
     {% endif %}
 </main>
 {% endblock %}

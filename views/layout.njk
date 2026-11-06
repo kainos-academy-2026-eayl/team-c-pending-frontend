@@ -5,33 +5,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %}</title>
-    <link rel="stylesheet" type="text/css" href="/common.css">
+    <link rel="stylesheet" href="/css/styles.css">
     {% block head %}{% endblock %}
 </head>
 
-<body>
-    <div class="content">
-        <header>
-            <h1><a href="/">Pending Studios</a></h1>
-            <form action="/products" method="get" class="header-search" role="search">
-                <label for="product-search" class="visually-hidden">Search products</label>
-                <input type="search" id="product-search" name="q" placeholder="Search products..."
-                    value="{{ searchQuery }}">
-                {% if currentCategory %}
-                <input type="hidden" name="category" value="{{ currentCategory }}">
-                {% endif %}
-                <button type="submit" class="main-button">Search</button>
-            </form>
-            <div class="links">
-                {% if me %}
-                <a href="/account" data-test-id="profile-button"><img src="/account.svg" alt="Account"></a>
-                {% if me.role == "admin" %}<a href="/admin">Admin portal</a>{% endif %}
-                <a href="/basket"><img src="/basket.svg" alt="Basket">{% if me.basketCount != 0 %}<span
-                        class="basket-count">{{ me.basketCount }}</span>{% endif %}</a>
-                {% else %}
-                <a href="/login">Login</a>
-                <a href="/register">Register</a>
-                {% endif %}
+<body class="bg-gray-50">
+    <div class="min-h-screen bg-gray-50">
+        <header class="bg-white shadow border-b border-gray-200">
+            <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex flex-wrap items-center justify-between gap-6">
+                <h1 class="flex-shrink-0">
+                    <a href="/" class="text-2xl font-bold text-gray-900 hover:text-gray-700">Pending Studios</a>
+                </h1>
+                <form action="/products" method="get" class="flex-1 min-w-60 flex items-center gap-2" role="search">
+                    <label for="product-search" class="sr-only">Search products</label>
+                    <input type="search" id="product-search" name="q" placeholder="Search products..."
+                        value="{{ searchQuery }}" class="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-600">
+                    {% if currentCategory %}
+                    <input type="hidden" name="category" value="{{ currentCategory }}">
+                    {% endif %}
+                    <button type="submit" class="px-4 py-2 bg-amber-700 text-white rounded-md hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-600 flex-shrink-0">Search</button>
+                </form>
+                <div class="flex items-center gap-6">
+                    {% if me %}
+                    <a href="/account" data-test-id="profile-button" class="text-amber-700 hover:text-amber-600"><img src="/account.svg" alt="Account" class="w-6 h-6"></a>
+                    {% if me.role == "admin" %}<a href="/admin" class="text-amber-700 hover:text-amber-600">Admin portal</a>{% endif %}
+                    <a href="/basket" class="relative text-amber-700 hover:text-amber-600"><img src="/basket.svg" alt="Basket" class="w-6 h-6">{% if me.basketCount != 0 %}<span
+                            class="absolute top-0 right-0 transform translate-x-1 -translate-y-1 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{{ me.basketCount }}</span>{% endif %}</a>
+                    {% else %}
+                    <a href="/login" class="text-gray-600 hover:text-gray-900">Login</a>
+                    <a href="/register" class="text-gray-600 hover:text-gray-900">Register</a>
+                    {% endif %}
+                </div>
             </div>
         </header>
         {% block content %}{% endblock %}

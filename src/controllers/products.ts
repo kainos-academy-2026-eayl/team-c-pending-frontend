@@ -22,10 +22,14 @@ export const productsController = async (req: Request, res: Response) => {
         return response;
     };
     let productData;
-    if (category) {
-        productData = await cache(`products-category-${category}`, () => loadProducts(`${process.env.API_ADDRESS}/products/category?category=${encodeURIComponent(category)}`));
-    } else {
-        productData = await cache(`products-all`, () => loadProducts(`${process.env.API_ADDRESS}/products`));
+    try {
+        if (category) {
+            productData = await cache(`products-category-${category}`, () => loadProducts(`${process.env.API_ADDRESS}/products/category?category=${encodeURIComponent(category)}`));
+        } else {
+            productData = await cache(`products-all`, () => loadProducts(`${process.env.API_ADDRESS}/products`));
+        }
+    } catch (error) {
+        if (!productErrorStatus) throw error;
     }
     if (productErrorStatus) {
         return res.status(productErrorStatus).send("Unable to load products");
@@ -66,7 +70,7 @@ export const productsController = async (req: Request, res: Response) => {
     }
     const categoriesData = await cache(`categories-all`, () => fetch(`${process.env.API_ADDRESS}/products/categories`));
     const categories = Array.isArray(categoriesData) ? categoriesData : [];
-    res.render("products.njk", { nextBackURL: req.originalUrl, products: matchingProducts.sort((a, b) => a.name.localeCompare(b.name)), bestSellers, bestSellersError, searchQuery, currentCategory: category, categories });
+    res.render("products.njk", { backendUrl: process.env.API_ADDRESS, nextBackURL: req.originalUrl, products: matchingProducts.sort((a, b) => a.name.localeCompare(b.name)), bestSellers, bestSellersError, searchQuery, currentCategory: category, categories });
 };
 
 export const productController = async (req: Request, res: Response) => {
@@ -86,7 +90,7 @@ export const productController = async (req: Request, res: Response) => {
         const stars = product.reviews.length
             ? Math.round(product.reviews.reduce((acc, review) => acc + review.rating, 0) / product.reviews.length)
             : 0;
-        return res.render("product.njk", { product, stars });
+        return res.render("product.njk", { backendUrl: process.env.API_ADDRESS, product, stars });
     } catch (error) {
         console.error("Failed to load product", error);
         return res.status(500).render("product.njk", { product: null });
@@ -104,7 +108,7 @@ router.get("/:id/add_review", async (req: Request, res: Response) => {
 });
 
 router.get("/:id/add_review_message", async (req: Request, res: Response) => {
-        if (!res.locals.me) {
+    if (!res.locals.me) {
         return res.redirect("/login");
     }
     const id = req.params.id as string;
@@ -114,7 +118,7 @@ router.get("/:id/add_review_message", async (req: Request, res: Response) => {
 });
 
 router.post("/:id/add_review", async (req: Request, res: Response) => {
-        if (!res.locals.me) {
+    if (!res.locals.me) {
         return res.redirect("/login");
     }
     const parsedInput = z.object({

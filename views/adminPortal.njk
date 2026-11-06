@@ -1,201 +1,257 @@
 {% extends "layout.njk" %}
 {% block title %}Admin Portal - {% if section == "customers" %}Customers{% elif section == "orders" %}Orders{% elif section == "add-products" %}Add products{% else %}Products{% endif %}{% endblock %}
-{% block head %}<link rel="stylesheet" href="/admin.css">{% endblock %}
+{% block head %}{% endblock %}
 {% block content %}
-<main class="admin-portal">
-    <h2>ADMIN PORTAL</h2>
-    <nav class="admin-navigation" aria-label="Admin sections">
-        <a href="/admin/customers"{% if section == "customers" %} aria-current="page"{% endif %}>Edit customers</a>
-        <a href="/admin/products"{% if section == "products" %} aria-current="page"{% endif %}>Edit products</a>
-        <a href="/admin/products/new"{% if section == "add-products" %} aria-current="page"{% endif %}>Add products</a>
-        <a href="/admin/orders"{% if section == "orders" %} aria-current="page"{% endif %}>View orders</a>
+<main class="max-w-6xl mx-auto px-4 py-8">
+    <h2 class="text-3xl font-bold text-gray-900 mb-6">ADMIN PORTAL</h2>
+    <nav class="flex flex-wrap gap-2 mb-8 justify-center" aria-label="Admin sections">
+        <a href="/admin/customers" class="px-4 py-2 border border-gray-300 rounded-md text-gray-900 {% if section == "customers" %}bg-amber-700 text-white border-amber-700 hover:bg-amber-600{% else %}hover:bg-gray-100{% endif %}">Edit customers</a>
+        <a href="/admin/products" class="px-4 py-2 border border-gray-300 rounded-md text-gray-900 {% if section == "products" %}bg-amber-700 text-white border-amber-700 hover:bg-amber-600{% else %}hover:bg-gray-100{% endif %}">Edit products</a>
+        <a href="/admin/products/new" class="px-4 py-2 border border-gray-300 rounded-md text-gray-900 {% if section == "add-products" %}bg-amber-700 text-white border-amber-700 hover:bg-amber-600{% else %}hover:bg-gray-100{% endif %}">Add products</a>
+        <a href="/admin/orders" class="px-4 py-2 border border-gray-300 rounded-md text-gray-900 {% if section == "orders" %}bg-amber-700 text-white border-amber-700 hover:bg-amber-600{% else %}hover:bg-gray-100{% endif %}">View orders</a>
     </nav>
-    {% if error %}<p role="alert">{{ error }}</p>{% endif %}
-    {% if success %}<p role="status">{{ success }}</p>{% endif %}
+    {% if error %}<p role="alert" class="text-red-600 mb-4 p-4 bg-red-50 rounded-lg">{{ error }}</p>{% endif %}
+    {% if success %}<p role="status" class="text-amber-700 mb-4 p-4 bg-amber-50 rounded-lg">{{ success }}</p>{% endif %}
 
     {% if section == "customers" %}
     <section aria-labelledby="customers-heading">
-        <h2 id="customers-heading">Customers</h2>
-        <form class="admin-filters" action="/admin/customers" method="get" role="search">
-            <label for="customer-search">Search customers by name or email</label>
-            <input id="customer-search" type="search" name="search" value="{{ search }}"
-                placeholder="Name or email">
-            <button class="main-button" type="submit">Search customers</button>
-            <a href="/admin/customers">Clear search</a>
+        <h2 id="customers-heading" class="text-2xl font-bold text-gray-900 mb-6">Customers</h2>
+        <form class="bg-white border border-gray-200 rounded-lg p-6 mb-6" action="/admin/customers" method="get" role="search">
+            <div class="mb-4">
+                <label for="customer-search" class="block text-sm font-medium text-gray-700 mb-2">Search customers by name or email</label>
+                <input id="customer-search" type="search" name="search" value="{{ search }}" placeholder="Name or email" class="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-600">
+            </div>
+            <div class="flex gap-3">
+                <button class="px-6 py-2 bg-amber-700 text-white rounded-md hover:bg-amber-600 font-medium" type="submit">Search customers</button>
+                <a href="/admin/customers" class="px-6 py-2 bg-gray-200 text-gray-900 rounded-md hover:bg-gray-300">Clear search</a>
+            </div>
         </form>
-        <p role="status">{{ customers | length }} customer(s) found.</p>
-        {% for customer in customers %}
-        <form class="admin-edit-form" action="/admin/customers/{{ customer.customerID }}?{{ filterQuery }}" method="post">
-            <fieldset>
-                <legend>CustomerID: {{ customer.customerID }} ({{ customer.role }})</legend>
-                <label for="customer-first-{{ customer.customerID }}">First name</label>
-                <input id="customer-first-{{ customer.customerID }}" name="firstName"
-                    value="{{ customer.firstName }}" required>
-                <label for="customer-last-{{ customer.customerID }}">Last name</label>
-                <input id="customer-last-{{ customer.customerID }}" name="lastName"
-                    value="{{ customer.lastName }}" required>
-                <label for="customer-email-{{ customer.customerID }}">Email</label>
-                <input id="customer-email-{{ customer.customerID }}" name="email" type="email"
-                    value="{{ customer.email }}" required>
-                <div class="admin-actions">
-                    <button class="main-button" type="submit">Save customer</button>
-                    <a class="admin-delete-button" href="/admin/customer/{{ customer.customerID }}/delete?{{ filterQuery }}">Delete customer</a>
+        <p role="status" class="text-gray-700 mb-6 font-medium">{{ customers | length }} customer(s) found.</p>
+        <div class="space-y-4">
+            {% for customer in customers %}
+            <form class="bg-white border border-gray-200 rounded-lg p-6" action="/admin/customers/{{ customer.customerID }}?{{ filterQuery }}" method="post">
+                <fieldset class="border-b border-gray-200 pb-4 mb-4">
+                    <legend class="text-lg font-semibold text-gray-900 mb-4">CustomerID: {{ customer.customerID }} ({{ customer.role }})</legend>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label for="customer-first-{{ customer.customerID }}" class="block text-sm font-medium text-gray-700 mb-1">First name</label>
+                            <input id="customer-first-{{ customer.customerID }}" name="firstName" value="{{ customer.firstName }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-600">
+                        </div>
+                        <div>
+                            <label for="customer-last-{{ customer.customerID }}" class="block text-sm font-medium text-gray-700 mb-1">Last name</label>
+                            <input id="customer-last-{{ customer.customerID }}" name="lastName" value="{{ customer.lastName }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-600">
+                        </div>
+                        <div>
+                            <label for="customer-email-{{ customer.customerID }}" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                            <input id="customer-email-{{ customer.customerID }}" name="email" type="email" value="{{ customer.email }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-600">
+                        </div>
+                    </div>
+                </fieldset>
+                <div class="flex gap-3">
+                    <button class="px-6 py-2 bg-amber-700 text-white rounded-md hover:bg-amber-600 font-medium" type="submit">Save customer</button>
+                    <a class="px-6 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 font-medium" href="/admin/customer/{{ customer.customerID }}/delete?{{ filterQuery }}">Delete customer</a>
                 </div>
-            </fieldset>
-        </form>
-        {% else %}
-        <p>No customers found. Try a different name or email, or clear the search.</p>
-        {% endfor %}
+            </form>
+            {% else %}
+            <p class="text-gray-600">No customers found. Try a different name or email, or clear the search.</p>
+            {% endfor %}
+        </div>
     </section>
 
     {% elif section == "add-products" %}
         <section aria-labelledby="add-products-heading">
-            <h2 id="add-products-heading">Add products</h2>
-            <form class="admin-edit-form" action="/admin/products/new" method="post">
-                <fieldset>
-                    <legend>New product</legend>
-                    <label for="new-product-name">Name</label>
-                    <input id="new-product-name" name="name" value="{{ values.name }}" required>
-                    <label for="new-product-price">Price (£)</label>
-                    <input id="new-product-price" name="price" type="number" min="0" step="0.01"
-                        value="{{ values.price }}" required>
-                    <label for="new-product-category">Category</label>
-                    <input id="new-product-category" name="category" value="{{ values.category }}" required>
-                    <label for="new-product-description">Description</label>
-                    <textarea id="new-product-description" name="description" required>{{ values.description }}</textarea>
-                    <label for="new-product-quantity">Quantity</label>
-                    <input id="new-product-quantity" name="quantity" type="number" min="0" step="1"
-                        value="{{ values.quantity }}" required>
-                    <label for="new-product-image">Image URL (optional)</label>
-                    <input id="new-product-image" name="image" type="url" value="{{ values.image }}">
-                    <p>New products are immediately available for browsing.</p>
-                    <button class="main-button" type="submit">Add product</button>
-                </fieldset>
-            </form>
+            <h2 id="add-products-heading" class="text-2xl font-bold text-gray-900 mb-6">Add products</h2>
+            <div class="bg-white border border-gray-200 rounded-lg p-6">
+                <form action="/admin/products/new" method="post">
+                    <fieldset>
+                        <legend class="text-lg font-semibold text-gray-900 mb-6">New product</legend>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label for="new-product-name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                                <input id="new-product-name" name="name" value="{{ values.name }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-600">
+                            </div>
+                            <div>
+                                <label for="new-product-price" class="block text-sm font-medium text-gray-700 mb-1">Price (£)</label>
+                                <input id="new-product-price" name="price" type="number" min="0" step="0.01" value="{{ values.price }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-600">
+                            </div>
+                            <div>
+                                <label for="new-product-category" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                                <input id="new-product-category" name="category" value="{{ values.category }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-600">
+                            </div>
+                            <div>
+                                <label for="new-product-quantity" class="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+                                <input id="new-product-quantity" name="quantity" type="number" min="0" step="1" value="{{ values.quantity }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-600">
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="new-product-description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                            <textarea id="new-product-description" name="description" required class="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-600" style="min-height: 120px;">{{ values.description }}</textarea>
+                        </div>
+                        <div class="mb-6">
+                            <label for="new-product-image" class="block text-sm font-medium text-gray-700 mb-1">Image URL (optional)</label>
+                            <input id="new-product-image" name="image" type="url" value="{{ values.image }}" class="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-600">
+                        </div>
+                        <p class="text-sm text-gray-600 mb-6">New products are immediately available for browsing.</p>
+                        <button class="px-6 py-2 bg-amber-700 text-white rounded-md hover:bg-amber-600 font-medium" type="submit">Add product</button>
+                    </fieldset>
+                </form>
+            </div>
         </section>
         {% elif section == "orders" %}
         <section aria-labelledby="orders-heading">
-            <h2 id="orders-heading">All customer orders</h2>
-            <form class="admin-filters" action="/admin/orders" method="get">
-                <label for="order-search">Customer name</label>
-                <input id="order-search" type="search" name="search" value="{{ search }}"
-                    placeholder="Customer name">
-                <label for="order-status">Order status</label>
-                <select id="order-status" name="status">
-                    <option value="">All statuses</option>
-                    {% for option in statuses %}
-                    <option value="{{ option }}"{% if status == option %} selected{% endif %}>{{ option }}</option>
-                    {% endfor %}
-                </select>
-                <label for="order-sort">Order date</label>
-                <select id="order-sort" name="sort">
-                    <option value="newest"{% if sort == "newest" %} selected{% endif %}>Newest first</option>
-                    <option value="oldest"{% if sort == "oldest" %} selected{% endif %}>Oldest first</option>
-                </select>
-                <button class="main-button" type="submit">Apply filters</button>
-                <a href="/admin/orders">Clear filters</a>
-            </form>
-            <p role="status">{{ orders | length }} order(s) found.</p>
-            {% for order in orders %}
-            <article class="admin-order">
-                <h3>Order ID: {{ order.orderID }}</h3>
-                <p>Customer: {{ order.customer.firstName }} {{ order.customer.lastName }}</p>
-                <p>Customer ID: {{ order.customerID }}</p>
-                <p>Date (UTC): <time datetime="{{ order.date }}">{{ order.formattedDate }}</time></p>
-                <p>Status: {{ order.status }} · Type: {{ order.type }}</p>
-                <div class="admin-order-items">
-                    <table>
-                        <thead>
-                            <tr><th scope="col">Product</th><th scope="col">Product ID</th><th scope="col">Quantity</th><th scope="col">Unit price</th><th scope="col">Subtotal</th><th scope="col">Status</th></tr>
-                        </thead>
-                        <tbody>
-                            {% for item in order.orderItems %}
-                            <tr>
-                                <td>{{ item.product.name }}</td>
-                                <td>{{ item.productID }}</td>
-                                <td>{{ item.quantity }}</td>
-                                <td>£{{ item.unitPrice | pounds }}</td>
-                                <td>£{{ (item.unitPrice * item.quantity) | pounds }}</td>
-                                <td>{{ item.itemStatus }}</td>
-                            </tr>
-                            {% else %}
-                            <tr><td colspan="6">No items in this order.</td></tr>
+            <h2 id="orders-heading" class="text-2xl font-bold text-gray-900 mb-6">All customer orders</h2>
+            <form class="bg-white border border-gray-200 rounded-lg p-6 mb-6" action="/admin/orders" method="get">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div>
+                        <label for="order-search" class="block text-sm font-medium text-gray-700 mb-1">Customer name</label>
+                        <input id="order-search" type="search" name="search" value="{{ search }}" placeholder="Customer name" class="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-600">
+                    </div>
+                    <div>
+                        <label for="order-status" class="block text-sm font-medium text-gray-700 mb-1">Order status</label>
+                        <select id="order-status" name="status" class="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-amber-600">
+                            <option value="">All statuses</option>
+                            {% for option in statuses %}
+                            <option value="{{ option }}"{% if status == option %} selected{% endif %}>{{ option }}</option>
                             {% endfor %}
-                        </tbody>
-                    </table>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="order-sort" class="block text-sm font-medium text-gray-700 mb-1">Order date</label>
+                        <select id="order-sort" name="sort" class="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-amber-600">
+                            <option value="newest"{% if sort == "newest" %} selected{% endif %}>Newest first</option>
+                            <option value="oldest"{% if sort == "oldest" %} selected{% endif %}>Oldest first</option>
+                        </select>
+                    </div>
                 </div>
-                <p><strong>Total: £{{ order.total | pounds }}</strong></p>
-            </article>
-            {% else %}
-            <p>No orders found.</p>
-            {% endfor %}
+                <div class="flex gap-3">
+                    <button class="px-6 py-2 bg-amber-700 text-white rounded-md hover:bg-amber-600 font-medium" type="submit">Apply filters</button>
+                    <a href="/admin/orders" class="px-6 py-2 bg-gray-200 text-gray-900 rounded-md hover:bg-gray-300">Clear filters</a>
+                </div>
+            </form>
+            <p role="status" class="text-gray-700 mb-6 font-medium">{{ orders | length }} order(s) found.</p>
+            <div class="space-y-6">
+                {% for order in orders %}
+                <article class="bg-white border border-gray-200 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Order ID: {{ order.orderID }}</h3>
+                    <div class="grid grid-cols-2 gap-4 mb-4 text-sm text-gray-700">
+                        <p><span class="font-medium">Customer:</span> {{ order.customer.firstName }} {{ order.customer.lastName }}</p>
+                        <p><span class="font-medium">Customer ID:</span> {{ order.customerID }}</p>
+                        <p><span class="font-medium">Date (UTC):</span> <time datetime="{{ order.date }}">{{ order.formattedDate }}</time></p>
+                        <p><span class="font-medium">Status:</span> {{ order.status }} · <span class="font-medium">Type:</span> {{ order.type }}</p>
+                    </div>
+                    <div class="overflow-x-auto mb-4">
+                        <table class="w-full text-sm border-collapse">
+                            <thead>
+                                <tr class="border-b border-gray-200">
+                                    <th class="text-left px-3 py-2 font-semibold text-gray-900">Product</th>
+                                    <th class="text-left px-3 py-2 font-semibold text-gray-900">Product ID</th>
+                                    <th class="text-left px-3 py-2 font-semibold text-gray-900">Quantity</th>
+                                    <th class="text-left px-3 py-2 font-semibold text-gray-900">Unit price</th>
+                                    <th class="text-left px-3 py-2 font-semibold text-gray-900">Subtotal</th>
+                                    <th class="text-left px-3 py-2 font-semibold text-gray-900">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order.orderItems %}
+                                <tr class="border-b border-gray-200">
+                                    <td class="px-3 py-2 text-gray-700">{{ item.product.name }}</td>
+                                    <td class="px-3 py-2 text-gray-700">{{ item.productID }}</td>
+                                    <td class="px-3 py-2 text-gray-700">{{ item.quantity }}</td>
+                                    <td class="px-3 py-2 text-gray-700">£{{ item.unitPrice | pounds }}</td>
+                                    <td class="px-3 py-2 text-gray-700">£{{ (item.unitPrice * item.quantity) | pounds }}</td>
+                                    <td class="px-3 py-2 text-gray-700">{{ item.itemStatus }}</td>
+                                </tr>
+                                {% else %}
+                                <tr><td colspan="6" class="px-3 py-2 text-gray-600">No items in this order.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="font-semibold text-gray-900">Total: £{{ order.total | pounds }}</p>
+                </article>
+                {% else %}
+                <p class="text-gray-600">No orders found.</p>
+                {% endfor %}
+            </div>
         </section>
     {% else %}
     <section aria-labelledby="products-heading">
-        <h2 id="products-heading">Products</h2>
-        <form class="admin-filters" action="/admin/products" method="get" role="search">
-            <label for="product-search">Search products by name</label>
-            <input id="product-search" type="search" name="search" value="{{ search }}"
-                placeholder="Product name">
-            <label for="product-category">Category</label>
-            <select id="product-category" name="category">
-                <option value="">All categories</option>
-                {% for option in categories %}
-                <option value="{{ option }}"{% if category == option %} selected{% endif %}>{{ option }}</option>
-                {% endfor %}
-            </select>
-            <button class="main-button" type="submit">Filter products</button>
-            <a href="/admin/products">Clear filters</a>
+        <h2 id="products-heading" class="text-2xl font-bold text-gray-900 mb-6">Products</h2>
+        <form class="bg-white border border-gray-200 rounded-lg p-6 mb-6" action="/admin/products" method="get" role="search">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label for="product-search" class="block text-sm font-medium text-gray-700 mb-1">Search products by name</label>
+                    <input id="product-search" type="search" name="search" value="{{ search }}" placeholder="Product name" class="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-600">
+                </div>
+                <div>
+                    <label for="product-category" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                    <select id="product-category" name="category" class="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-amber-600">
+                        <option value="">All categories</option>
+                        {% for option in categories %}
+                        <option value="{{ option }}"{% if category == option %} selected{% endif %}>{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="flex gap-3">
+                <button class="px-6 py-2 bg-amber-700 text-white rounded-md hover:bg-amber-600 font-medium" type="submit">Filter products</button>
+                <a href="/admin/products" class="px-6 py-2 bg-gray-200 text-gray-900 rounded-md hover:bg-gray-300">Clear filters</a>
+            </div>
         </form>
-        <p role="status">{{ products | length }} product(s) found.</p>
-        {% for product in products %}
-        <div class="admin-edit-form">
-            <fieldset>
-                <legend>ProductID: {{ product.productID }}</legend>
-                <form action="/admin/products/{{ product.productID }}?{{ filterQuery }}" method="post">
-                    <div class="product-primary-fields">
-                        <div class="product-basic-fields">
-                            <div>
-                                <label for="product-name-{{ product.productID }}">Name</label>
-                                <input id="product-name-{{ product.productID }}" name="name" value="{{ product.name }}" required>
+        <p role="status" class="text-gray-700 mb-6 font-medium">{{ products | length }} product(s) found.</p>
+        <div class="space-y-6">
+            {% for product in products %}
+            <div class="bg-white border border-gray-200 rounded-lg p-6">
+                <fieldset>
+                    <legend class="text-lg font-semibold text-gray-900 mb-6">ProductID: {{ product.productID }}</legend>
+                    <form action="/admin/products/{{ product.productID }}?{{ filterQuery }}" method="post" class="mb-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="product-name-{{ product.productID }}" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                                    <input id="product-name-{{ product.productID }}" name="name" value="{{ product.name }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-600">
+                                </div>
+                                <div>
+                                    <label for="product-price-{{ product.productID }}" class="block text-sm font-medium text-gray-700 mb-1">Price (£)</label>
+                                    <input id="product-price-{{ product.productID }}" name="price" type="number" min="0" step="0.01" value="{{ product.price }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-600">
+                                </div>
+                                <div>
+                                    <label for="product-category-{{ product.productID }}" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                                    <input id="product-category-{{ product.productID }}" name="category" value="{{ product.category }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-600">
+                                </div>
                             </div>
-                            <div>
-                                <label for="product-price-{{ product.productID }}">Price (£)</label>
-                                <input id="product-price-{{ product.productID }}" name="price" type="number" min="0" step="0.01"
-                                    value="{{ product.price }}" required>
-                            </div>
-                            <div>
-                                <label for="product-category-{{ product.productID }}">Category</label>
-                                <input id="product-category-{{ product.productID }}" name="category" value="{{ product.category }}"
-                                    required>
+                            <div class="flex items-center justify-center">
+                                <img class="max-w-xs w-full h-auto rounded-lg border border-gray-300 object-contain" src="{{ product.image }}" alt="{{ product.name }}" style="aspect-ratio: 1;">
                             </div>
                         </div>
-                        <img class="product-image-preview" src="{{ product.image }}" alt="{{ product.name }}">
-                    </div>
-                    <label for="product-description-{{ product.productID }}">Description</label>
-                    <textarea id="product-description-{{ product.productID }}" name="description"
-                        required>{{ product.description }}</textarea>
-                    <label for="product-quantity-{{ product.productID }}">Quantity</label>
-                    <input id="product-quantity-{{ product.productID }}" name="quantity" type="number" min="0" step="1"
-                        value="{{ product.quantity }}" required>
-                    <label for="product-image-{{ product.productID }}">Image URL</label>
-                    <input id="product-image-{{ product.productID }}" name="image" type="url"
-                        value="{{ product.image or '' }}">
-                    <div class="admin-actions">
-                        <button class="main-button" type="submit">Save product</button>
-                    </div>
-                </form>
-                <form action="/admin/products/{{ product.productID }}/visibility?{{ filterQuery }}" method="post">
-                    <button class="main-button" type="submit" name="hide" value="{% if product.hide %}false{% else %}true{% endif %}">
-                        {% if product.hide %}Add product{% else %}Delete product{% endif %}
-                    </button>
-                    <p>Deleting removes the product from browsing and all customers' baskets. Existing orders are unchanged. Adding it again does not restore basket entries.</p>
-                </form>
-            </fieldset>
+                        <div class="mb-4">
+                            <label for="product-description-{{ product.productID }}" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                            <textarea id="product-description-{{ product.productID }}" name="description" required class="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-600" style="min-height: 120px;">{{ product.description }}</textarea>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                            <div>
+                                <label for="product-quantity-{{ product.productID }}" class="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+                                <input id="product-quantity-{{ product.productID }}" name="quantity" type="number" min="0" step="1" value="{{ product.quantity }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-600">
+                            </div>
+                            <div>
+                                <label for="product-image-{{ product.productID }}" class="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
+                                <input id="product-image-{{ product.productID }}" name="image" type="url" value="{{ product.image or '' }}" class="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-600">
+                            </div>
+                        </div>
+                        <button class="px-6 py-2 bg-amber-700 text-white rounded-md hover:bg-amber-600 font-medium" type="submit">Save product</button>
+                    </form>
+                    <form action="/admin/products/{{ product.productID }}/visibility?{{ filterQuery }}" method="post" class="pt-4 border-t border-gray-200">
+                        <button class="px-6 py-2 {% if product.hide %}bg-amber-700 hover:bg-amber-600{% else %}bg-red-600 hover:bg-red-700{% endif %} text-white rounded-md font-medium mb-3" type="submit" name="hide" value="{% if product.hide %}false{% else %}true{% endif %}">
+                            {% if product.hide %}Add product{% else %}Delete product{% endif %}
+                        </button>
+                        <p class="text-sm text-gray-600">Deleting removes the product from browsing and all customers' baskets. Existing orders are unchanged. Adding it again does not restore basket entries.</p>
+                    </form>
+                </fieldset>
+            </div>
+            {% else %}
+            <p class="text-gray-600">No products found. Try a different name or category, or clear the filters.</p>
+            {% endfor %}
         </div>
-        {% else %}
-        <p>No products found. Try a different name or category, or clear the filters.</p>
-        {% endfor %}
     </section>
     {% endif %}
 </main>

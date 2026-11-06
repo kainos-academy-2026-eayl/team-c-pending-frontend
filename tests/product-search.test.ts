@@ -1,6 +1,7 @@
 import request from "supertest";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createApp } from "../src/app";
+import cache from "../src/cache";
 
 vi.mock("../src/cache", () => ({
     default: vi.fn(async (_name: string, load: () => Promise<Response>) => {
@@ -56,7 +57,8 @@ describe("Product search", () => {
 
     it("renders an accessible search form and retains the search and category", async () => {
         const response = await request(createApp()).get("/products?q=%20apple%20&category=Fruit").expect(200);
-        expect(response.text).toContain('action="/products" method="get" class="header-search" role="search"');
+        expect(response.text).toContain('action="/products" method="get"');
+        expect(response.text).toContain('role="search"');
         expect(response.text).toContain('for="product-search"');
         expect(response.text).toContain('value="apple"');
         expect(response.text).toContain('type="hidden" name="category" value="Fruit"');
@@ -88,9 +90,20 @@ describe("Product search", () => {
         expect(response.text).toBe("Unable to load products");
     });
 
+    it("preserves API error status with the real cache and does not cache failures", async () => {
+        const { default: actualCache } = await vi.importActual<typeof import("../src/cache")>("../src/cache");
+        for (let attempt = 0; attempt < 2; attempt++) {
+            vi.mocked(cache).mockImplementationOnce(actualCache);
+            apiFetch.mockResolvedValueOnce(Response.json({ error: "Unavailable" }, { status: 503 }));
+            const response = await request(createApp()).get("/products?q=apple&category=Unavailable").expect(503);
+            expect(response.text).toBe("Unable to load products");
+        }
+        expect(apiFetch).toHaveBeenCalledTimes(2);
+    });
+
     it("includes the shared search on other pages", async () => {
         const response = await request(createApp()).get("/login").expect(200);
-        expect(response.text).toContain('class="header-search" role="search"');
+        expect(response.text).toContain('role="search"');
         expect(response.text).not.toContain('type="hidden" name="category"');
         expect(response.text).not.toContain('src="/search.js"');
     });
