@@ -11,13 +11,16 @@
 		"start": "node dist/index.js",
 		"test": "vitest run",
 		"lint": "biome check",
-		"lint:fix": "biome check --write"
+		"lint:fix": "biome check --write",
+		"build:css": "tailwindcss -i ./src/styles/input.css -o ./public/css/styles.css",
+		"watch:css": "tailwindcss -i ./src/styles/input.css -o ./public/css/styles.css --watch"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
 	"devDependencies": {
 		"@playwright/test": "^1.64.1",
+		"@tailwindcss/cli": "^4.3.4",
 		"@types/cookie-parser": "^1.4.10",
 		"@types/express": "5.0.6",
 		"@types/jsonwebtoken": "^9.0.10",
@@ -27,6 +30,7 @@
 		"biome": "^0.3.3",
 		"esbuild": "0.28.2",
 		"supertest": "^7.3.1",
+		"tailwindcss": "^4.3.4",
 		"tsx": "4.23.13",
 		"typescript": "7.0.2",
 		"vitest": "^5.0.5"

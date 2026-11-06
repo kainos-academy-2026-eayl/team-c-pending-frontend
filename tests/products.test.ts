@@ -56,7 +56,7 @@ afterEach(() => {
 describe("homepage best sellers", () => {
     it("excludes all carousel links and controls from sequential Tab navigation", async () => {
         const response = await request(createApp()).get("/").expect(200);
-        const section = response.text.match(/<section class="best-sellers"[\s\S]*?<\/section>/)![0];
+        const section = response.text.match(/<section[^>]*aria-labelledby="best-sellers-title"[\s\S]*?<\/section>/)![0];
         const interactiveElements = section.match(/<(?:a|button)\b[^>]*>/g)!;
         expect(interactiveElements).toHaveLength(4);
         expect(interactiveElements.every(element => element.includes('tabindex="-1"'))).toBe(true);
@@ -70,14 +70,12 @@ describe("homepage best sellers", () => {
         expect(response.text).toContain("£24.50");
         expect(response.text).toContain('aria-pressed="false"');
         expect(response.text).toContain('aria-label="Pause rotation"');
-        expect(response.text).toContain('class="carousel-pause-icon"');
-        expect(response.text).toContain('class="carousel-play-icon"');
         expect(response.text).not.toContain(">Pause rotation</button>");
         expect(response.text).toContain('src="/products.js"');
-        expect(response.text).toContain('href="/products.css"');
-        expect(response.text).toContain('id="best-sellers-title">Best sellers</h2>');
+        expect(response.text).toContain('href="/carousel.css"');
+        expect(response.text).toContain('id="best-sellers-title"');
+        expect(response.text).toContain("Best sellers");
         expect(response.text).not.toContain("Discover what's popular");
-        expect(response.text).not.toContain('class="globe-help"');
         expect(response.text).toContain('width="56" height="56"');
         expect(fetchMock).toHaveBeenCalledWith("http://api.test/products/best-sellers");
     });
@@ -100,7 +98,7 @@ describe("homepage best sellers", () => {
         const response = await request(createApp()).get("/").expect(200);
         expect(response.text).toContain("Best sellers");
         expect(response.text).toContain('id="best-sellers-globe"');
-        expect(response.text).toContain('href="/products.css"');
+        expect(response.text).toContain('href="/carousel.css"');
         expect(response.text).toContain('src="/products.js"');
         expect(response.text).toContain("Desk lamp");
     });
@@ -119,7 +117,7 @@ describe("homepage best sellers", () => {
                     path.endsWith("categories") ? ["Lighting"] : catalogue);
             });
             const response = await request(createApp()).get("/").expect(200);
-            const ids = [...response.text.matchAll(/class="globe-product" tabindex="-1" href="\/products\/(\d+)"/g)]
+            const ids = [...response.text.matchAll(/tabindex="-1" href="\/products\/(\d+)"/g)]
                 .map((match) => Number(match[1]));
             expect(ids).toHaveLength(Math.min(12, catalogueCount));
             expect(new Set(ids).size).toBe(ids.length);
@@ -140,7 +138,7 @@ describe("homepage best sellers", () => {
             String(input).endsWith("categories") ? ["Lighting"] : [product, product],
         ));
         const response = await request(createApp()).get("/").expect(200);
-        expect(response.text.match(/class="globe-product" tabindex="-1" href="\/products\/8"/g)).toHaveLength(1);
+        expect(response.text.match(/tabindex="-1" href="\/products\/8"/g)).toHaveLength(1);
     });
 
     it("keeps random selections stable until the ten-minute cache expires", async () => {
@@ -155,7 +153,7 @@ describe("homepage best sellers", () => {
             String(input).endsWith("best-sellers") ? [] :
                 String(input).endsWith("categories") ? ["Lighting"] : catalogue,
         ));
-        const ids = (html: string) => [...html.matchAll(/class="globe-product" tabindex="-1" href="\/products\/(\d+)"/g)]
+        const ids = (html: string) => [...html.matchAll(/tabindex="-1" href="\/products\/(\d+)"/g)]
             .map((match) => Number(match[1]));
         const first = await request(createApp()).get("/").expect(200);
         random.mockReturnValue(0.999);
@@ -194,7 +192,7 @@ describe("homepage best sellers", () => {
         const response = await request(createApp()).get("/").expect(200);
         expect(response.text).toContain("&lt;script&gt;");
         expect(response.text).not.toContain('<script>alert("x")</script>');
-        expect(response.text).toContain('class="globe-image-placeholder" >No image</span>');
+        expect(response.text).toContain("No image");
     });
 });
 
