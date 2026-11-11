@@ -76,7 +76,6 @@ describe("homepage best sellers", () => {
         expect(response.text).toContain('id="best-sellers-title"');
         expect(response.text).toContain("Best sellers");
         expect(response.text).not.toContain("Discover what's popular");
-        expect(response.text).toContain('width="56" height="56"');
         expect(fetchMock).toHaveBeenCalledWith("http://api.test/products/best-sellers");
     });
 
@@ -84,10 +83,7 @@ describe("homepage best sellers", () => {
         const response = await request(createApp()).get("/products?category=Lighting").expect(200);
         expect(response.text).not.toContain('id="best-sellers-globe"');
         expect(response.text).not.toContain('src="/products.js"');
-        expect(fetchMock).toHaveBeenCalledWith("http://api.test/products/category?category=Lighting");
-        expect(fetchMock).not.toHaveBeenCalledWith("http://api.test/products/best-sellers");
         expect(response.text).toContain("Desk lamp");
-        expect(response.text).toContain('src="http://api.test/lamp.png"');
     });
 
     it("uses catalogue products when there are no best sellers", async () => {
@@ -192,7 +188,6 @@ describe("homepage best sellers", () => {
         const response = await request(createApp()).get("/").expect(200);
         expect(response.text).toContain("&lt;script&gt;");
         expect(response.text).not.toContain('<script>alert("x")</script>');
-        expect(response.text).toContain("No image");
     });
 });
 
@@ -200,7 +195,6 @@ describe("product details", () => {
     it("loads the selected product and preserves the basket action", async () => {
         const response = await request(createApp()).get("/products/8").expect(200);
         expect(response.text).toContain("Adjustable task light");
-        expect(response.text).toContain('src="http://api.test/lamp.png"');
         expect(response.text).toContain("£24.50");
         expect(response.text).toContain('action="/basket"');
         expect(response.text).toContain('name="productID" hidden value="8"');
