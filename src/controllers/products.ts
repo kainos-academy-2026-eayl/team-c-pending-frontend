@@ -70,7 +70,7 @@ export const productsController = async (req: Request, res: Response) => {
     }
     const categoriesData = await cache(`categories-all`, () => fetch(`${process.env.API_ADDRESS}/products/categories`));
     const categories = Array.isArray(categoriesData) ? categoriesData : [];
-    res.render("products.njk", { backendUrl: process.env.API_ADDRESS, nextBackURL: req.originalUrl, products: matchingProducts.sort((a, b) => a.name.localeCompare(b.name)), bestSellers, bestSellersError, searchQuery, currentCategory: category, categories });
+    res.render("products.njk", { nextBackURL: req.originalUrl, products: matchingProducts.sort((a, b) => a.name.localeCompare(b.name)), bestSellers, bestSellersError, searchQuery, currentCategory: category, categories });
 };
 
 export const productController = async (req: Request, res: Response) => {
@@ -90,7 +90,7 @@ export const productController = async (req: Request, res: Response) => {
         const stars = product.reviews.length
             ? Math.round(product.reviews.reduce((acc, review) => acc + review.rating, 0) / product.reviews.length)
             : 0;
-        return res.render("product.njk", { backendUrl: process.env.API_ADDRESS, product, stars });
+        return res.render("product.njk", { product, stars });
     } catch (error) {
         console.error("Failed to load product", error);
         return res.status(500).render("product.njk", { product: null });
