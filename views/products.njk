@@ -48,8 +48,8 @@
                 <a class="globe-product flex flex-col items-center gap-2 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 text-center text-gray-900 no-underline"
                     tabindex="-1" href="/products/{{ product.id }}">
                     {% if product.image %}
-                    <img src="{{backendUrl}}{{ product.image }}" alt="" class="w-14 h-14 object-contain rounded"
-                        width="56" height="56">
+                    <img src="{{ product.image }}" alt="" class="w-14 h-14 object-contain rounded" width="56"
+                        height="56">
                     {% else %}
                     <div class="w-14 h-14 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-500">No
                         image</div>

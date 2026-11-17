@@ -1,0 +1,16 @@
+node_modules
+dist
+.git
+.github
+.husky
+.env
+.env.*
+*.pem
+*.crt
+*.key
+npm-debug.log*
+coverage
+test-results
+playwright-report
+public/css
+.DS_Store

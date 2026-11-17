@@ -45,6 +45,58 @@ curl http://localhost:3000/health
 
 Use `npm ci` rather than `npm install`. It installs the exact versions recorded in `package-lock.json`, so everyone on the team runs identical dependencies. Use `npm install` only when you are deliberately adding or upgrading a package.
 
+## Docker
+
+The [Dockerfile](Dockerfile) provides a `development` target and a default
+production image. Both include the Nunjucks templates and static assets.
+Production builds also type-check the server and compile Tailwind CSS.
+
+From the parent workspace directory, start the frontend, backend, and database:
+
+```sh
+docker compose up --build -d
+```
+
+On the company network, use the existing approved CA bundle and override:
+
+```sh
+docker compose -f docker-compose.yml -f docker-compose.corporate.yml up --build -d
+```
+
+The frontend is available at <http://localhost:3001>; set `FRONTEND_PORT` to
+change the host port. Compose sets `API_ADDRESS=http://backend:3000` so the
+frontend server can reach the backend on the Docker network.
+
+Development mounts source, templates, and public assets, but keeps Linux
+dependencies and generated CSS inside Docker rather than using host
+`node_modules`. CSS is compiled on startup. After changing Tailwind classes,
+rebuild CSS with:
+
+```sh
+docker compose exec frontend npm run build:css
+```
+
+Build and run production from this repository:
+
+```sh
+docker build -t team-c-frontend .
+docker run --rm -p 3001:3000 \
+  -e API_ADDRESS=http://your-backend-host:3000 team-c-frontend
+```
+
+Use the same shared API URL requirement when running production.
+
+On networks requiring HTTPS inspection trust, pass the approved PEM CA bundle:
+
+```sh
+docker build --no-cache \
+  --secret id=corporate_ca,src=/absolute/path/company-ca.crt \
+  -t team-c-frontend .
+```
+
+Keep TLS verification enabled. Runtime environment files, host dependencies,
+and locally generated CSS are excluded from the build context.
+
 ## Making it your own
 
 After clicking **Use this template** on GitHub and creating your own repository:

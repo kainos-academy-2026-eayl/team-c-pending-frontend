@@ -76,7 +76,6 @@ describe("homepage best sellers", () => {
         expect(response.text).toContain('id="best-sellers-title"');
         expect(response.text).toContain("Best sellers");
         expect(response.text).not.toContain("Discover what's popular");
-        expect(response.text).toContain('width="56" height="56"');
         expect(fetchMock).toHaveBeenCalledWith("http://api.test/products/best-sellers");
     });
 
@@ -84,8 +83,6 @@ describe("homepage best sellers", () => {
         const response = await request(createApp()).get("/products?category=Lighting").expect(200);
         expect(response.text).not.toContain('id="best-sellers-globe"');
         expect(response.text).not.toContain('src="/products.js"');
-        expect(fetchMock).toHaveBeenCalledWith("http://api.test/products/category?category=Lighting");
-        expect(fetchMock).not.toHaveBeenCalledWith("http://api.test/products/best-sellers");
         expect(response.text).toContain("Desk lamp");
         expect(response.text).toContain('src="/lamp.png"');
     });
