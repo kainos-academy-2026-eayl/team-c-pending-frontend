@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -16,7 +16,40 @@ jobs:
           node-version: "20"
       - run: npm ci
       - run: npm run lint
+
+  test:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm ci
       - run: npm test
+
+  docker-build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
       - run: docker build -t acraiacademy26.azurecr.io/team-c-pending-frontend:${{ github.sha }} .
+      - run: docker save -o "${{ runner.temp }}/docker-image.tar" acraiacademy26.azurecr.io/team-c-pending-frontend:${{ github.sha }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: docker-image
+          path: ${{ runner.temp }}/docker-image.tar
+          if-no-files-found: error
+          retention-days: 1
+
+  docker-push:
+    needs: docker-build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: docker-image
+          path: ${{ runner.temp }}
+      - run: docker load -i "${{ runner.temp }}/docker-image.tar"
       - run: echo "${{ secrets.ACR_PASSWORD }}" | docker login -u team-c-pending-frontend-image-pusher --password-stdin acraiacademy26.azurecr.io
       - run: docker push acraiacademy26.azurecr.io/team-c-pending-frontend:${{ github.sha }}
