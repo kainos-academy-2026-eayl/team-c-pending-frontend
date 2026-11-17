@@ -24,5 +24,5 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: docker build -t acraiacademy26.azurecr.io/team-c-pending-frontend:${{ github.sha }} .
-      - run: echo "${{ secrets.ACR_PASSWORD }}" | docker login -u team-c-pending-frontend-image-pusher --password-stdin acraiacademy26.azurecr.io
+      - run: echo "${{ secrets.ACR_PASSWORD }}" | docker login -u ${{ secrets.ACR_USERNAME }} --password-stdin acraiacademy26.azurecr.io
       - run: docker push acraiacademy26.azurecr.io/team-c-pending-frontend:${{ github.sha }}
