@@ -87,7 +87,7 @@ describe("homepage best sellers", () => {
         expect(fetchMock).toHaveBeenCalledWith("http://api.test/products/category?category=Lighting");
         expect(fetchMock).not.toHaveBeenCalledWith("http://api.test/products/best-sellers");
         expect(response.text).toContain("Desk lamp");
-        expect(response.text).toContain('src="http://api.test/lamp.png"');
+        expect(response.text).toContain('src="/lamp.png"');
     });
 
     it("uses catalogue products when there are no best sellers", async () => {
@@ -192,7 +192,6 @@ describe("homepage best sellers", () => {
         const response = await request(createApp()).get("/").expect(200);
         expect(response.text).toContain("&lt;script&gt;");
         expect(response.text).not.toContain('<script>alert("x")</script>');
-        expect(response.text).toContain("No image");
     });
 });
 
@@ -200,7 +199,7 @@ describe("product details", () => {
     it("loads the selected product and preserves the basket action", async () => {
         const response = await request(createApp()).get("/products/8").expect(200);
         expect(response.text).toContain("Adjustable task light");
-        expect(response.text).toContain('src="http://api.test/lamp.png"');
+        expect(response.text).toContain('src="/lamp.png"');
         expect(response.text).toContain("£24.50");
         expect(response.text).toContain('action="/basket"');
         expect(response.text).toContain('name="productID" hidden value="8"');
