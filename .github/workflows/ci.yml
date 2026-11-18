@@ -19,7 +19,7 @@ jobs:
       - run: npm run lint
       - run: npm test
 
-  docker-build:
+  docker-build-push:
     needs: lint-test
     runs-on: ubuntu-latest
     steps:
