@@ -35,20 +35,23 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - run: docker build -t acraiacademy26.azurecr.io/team-c-pending-frontend:${{ github.sha }} .
+      - run: docker save -o "${{ runner.temp }}/docker-image.tar" acraiacademy26.azurecr.io/team-c-pending-frontend:${{ github.sha }}
       - uses: actions/upload-artifact@v4
         with:
           name: docker-image
-          path: .
+          path: ${{ runner.temp }}/docker-image.tar
+          if-no-files-found: error
 
   docker-push:
-    needs: [lint, test]
+    needs: docker-build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
       - uses: actions/download-artifact@v4
         with:
           name: docker-image
-          path: .
+          path: ${{ runner.temp }}
+      - run: docker load -i "${{ runner.temp }}/docker-image.tar"
       - run: az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
       - run: az acr login --name acraiacademy26
       - run: docker push acraiacademy26.azurecr.io/team-c-pending-frontend:${{ github.sha }}
