@@ -2,13 +2,15 @@ name: Frontend CI
 
 on:
   workflow_dispatch:
+  pull_request:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
+
+permissions:
+  contents: read
 
 jobs:
-  lint-test:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -17,11 +19,42 @@ jobs:
           cache: "npm"
       - run: npm ci
       - run: npm run lint
+
+  test:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          cache: "npm"
+      - run: npm ci
       - run: npm test
 
   docker-build:
-    needs: lint-test
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
       - run: docker build -t acraiacademy26.azurecr.io/team-c-pending-frontend:${{ github.sha }} .
+      - run: docker save -o "${{ runner.temp }}/docker-image.tar" acraiacademy26.azurecr.io/team-c-pending-frontend:${{ github.sha }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: docker-image
+          path: ${{ runner.temp }}/docker-image.tar
+          if-no-files-found: error
+
+  docker-push:
+    if: github.event_name == 'push'
+    needs: docker-build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v4
+        with:
+          name: docker-image
+          path: ${{ runner.temp }}
+      - run: docker load -i "${{ runner.temp }}/docker-image.tar"
+      - run: az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+      - run: az acr login --name acraiacademy26
+      - run: docker push acraiacademy26.azurecr.io/team-c-pending-frontend:${{ github.sha }}
