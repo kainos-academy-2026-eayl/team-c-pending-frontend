@@ -19,9 +19,12 @@ jobs:
       - run: npm run lint
       - run: npm test
 
-  docker-build:
+  docker-build-push:
     needs: lint-test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
       - run: docker build -t acraiacademy26.azurecr.io/team-c-pending-frontend:${{ github.sha }} .
+      - run: az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+      - run: az acr login --name acraiacademy26
+      - run: docker push acraiacademy26.azurecr.io/team-c-pending-frontend:${{ github.sha }}
