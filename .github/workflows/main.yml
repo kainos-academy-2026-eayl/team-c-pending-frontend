@@ -1,0 +1,7 @@
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+build:
+  needs: test
+  runs-on: ubuntu-latest
