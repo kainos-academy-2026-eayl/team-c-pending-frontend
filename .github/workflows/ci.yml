@@ -2,6 +2,7 @@ name: Frontend CI
 
 on:
   workflow_dispatch:
+  pull_request:
   push:
     branches: [main]
 
@@ -44,6 +45,7 @@ jobs:
           if-no-files-found: error
 
   docker-push:
+    if: github.event_name == 'push'
     needs: docker-build
     runs-on: ubuntu-latest
     steps:
