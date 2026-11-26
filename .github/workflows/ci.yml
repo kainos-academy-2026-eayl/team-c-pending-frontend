@@ -59,3 +59,4 @@ jobs:
       - run: az acr login --name acraiacademy26
       - run: docker tag acraiacademy26.azurecr.io/team-c-pending-frontend:${{ github.sha }} acraiacademy26.azurecr.io/team-c-pending-frontend:latest
       - run: docker push acraiacademy26.azurecr.io/team-c-pending-frontend:${{ github.sha }}
+      - run: docker push acraiacademy26.azurecr.io/team-c-pending-frontend:latest
