@@ -57,4 +57,5 @@ jobs:
       - run: docker load -i "${{ runner.temp }}/docker-image.tar"
       - run: az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
       - run: az acr login --name acraiacademy26
+      - run: docker tag acraiacademy26.azurecr.io/team-c-pending-frontend:${{ github.sha }} acraiacademy26.azurecr.io/team-c-pending-frontend:latest
       - run: docker push acraiacademy26.azurecr.io/team-c-pending-frontend:${{ github.sha }}
