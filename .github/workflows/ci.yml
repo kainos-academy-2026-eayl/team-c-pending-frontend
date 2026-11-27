@@ -61,4 +61,4 @@ jobs:
       - run: docker tag acraiacademy26.azurecr.io/team-c-pending-frontend:${{ github.sha }} acraiacademy26.azurecr.io/team-c-pending-frontend:latest
       - run: docker push acraiacademy26.azurecr.io/team-c-pending-frontend:${{ github.sha }}
       - run: docker push acraiacademy26.azurecr.io/team-c-pending-frontend:latest
-      - run: az containerapp update --name pendingfrontendcontainerappdev --resource-group resource_group_pendingdev --image acraiacademy26.azurecr.io/team-c-pending-frontend:latest
+      - run: az containerapp update --name pendingfrontendcontainerappdev --resource-group resource_group_pendingdev --image acraiacademy26.azurecr.io/team-c-pending-frontend:latest --set-env-vars REDEPLOY=$(date +%s)
